@@ -4,4 +4,18 @@ public class StrengthExercise {
 	// parent class for strength exercises
 	private double weight;
 	private int repetitions;
+	private String exerciseName;
+	
+	public StrengthExercise(String exerciseName) {
+		this.exerciseName = exerciseName;
+	}
+	
+	public StrengthExercise(int reps, double weight) {
+		this.weight = weight;
+		this.repetitions = reps;
+	}
+	
+	public String toString() {
+		return new String(this.exerciseName);
+	}
 }
