@@ -23,7 +23,6 @@
             <ChoiceBox fx:id="numberOfExercisesChoiceBox" prefHeight="25.0" prefWidth="54.0">
  				<items>
             		<FXCollections fx:factory="observableArrayList">
-            			<Integer fx:value="0" />
             			<Integer fx:value="1" />
             			<Integer fx:value="2" />
             			<Integer fx:value="3" />
@@ -33,7 +32,11 @@
             			<Integer fx:value="7" />
             			<Integer fx:value="8" />
             			<Integer fx:value="9" />
-            			<Integer fx:value="10" />
+            			<Integer fx:value="11" />
+            			<Integer fx:value="12" />
+            			<Integer fx:value="13" />
+            			<Integer fx:value="14" />
+            			<Integer fx:value="15" />
             		</FXCollections>
             	</items>
             </ChoiceBox>

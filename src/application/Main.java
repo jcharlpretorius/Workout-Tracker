@@ -16,6 +16,11 @@ public class Main extends Application {
 			
 			FXMLLoader loader = new FXMLLoader();
 			VBox root = loader.load(new FileInputStream("src/application/WorkoutSelectionView.fxml"));
+			
+			// use FXMLLoader to get the controller and 'give' the primaryStage to the controller
+			WorkoutSelectionController controller = (WorkoutSelectionController)loader.getController();
+			controller.applicationStage = primaryStage;
+			
 			Scene scene = new Scene(root,400,400);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Workout App");
