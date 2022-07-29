@@ -15,7 +15,7 @@ public class Main extends Application {
 		try {
 			
 			FXMLLoader loader = new FXMLLoader();
-			VBox root = loader.load(new FileInputStream("src/application/WorkoutselectionView.fxml"));
+			VBox root = loader.load(new FileInputStream("src/application/WorkoutSelectionView.fxml"));
 			Scene scene = new Scene(root,400,400);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Workout App");
