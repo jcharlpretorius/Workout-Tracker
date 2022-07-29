@@ -9,11 +9,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
 
 public class WorkoutSelectionController {
 	// variable for the controller to access the stage
 	Stage applicationStage;
+//	ArrayList<ArrayList<StrengthExercise>> allExercises = new ArrayList<ArrayList<StrengthExercise>>(); // the ArrayList that stores all of the exercises done in the workout
 
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
@@ -27,45 +30,65 @@ public class WorkoutSelectionController {
     	applicationStage.setScene(workoutSelectionScene);
     }
     
-    void storeSets(Scene exerciseSelectionScene, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
+    void storeSets(Scene exerciseSelectionScene, String exerciseName, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
     	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
     	// change name depending on what this does.
+    	// create exercise objects
+    	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
     	
+    	// temporary string exercise name
+//    	String exerciseName = "Squat";
+    	// create StrengthExercise objects from textfield inputs and add them to an ArrayList
+    	for (int i = 0; i < repsTextFields.size(); i++) {
+    		int reps = Integer.parseInt(repsTextFields.get(i).getText());
+    		double weight = Double.parseDouble(weightTextFields.get(i).getText());
+    		StrengthExercise exercise = new StrengthExercise(exerciseName, reps, weight);
+    		exercisesDone.add(exercise);
+    	}
+    	
+    	// now add the above ArrayList to another ArrayList that will store all of the exercises
+    	// actually this could just be an ArrayList of StrengthExercises, not a nested ArrayList
+//    	allExercises.add(exercisesDone);
     	
     	// if no errors after input validation...
     	applicationStage.setScene(exerciseSelectionScene);
     }
    
-    void getRepsAndWeight(Scene exerciseSelectionScene, int numberOfSets) {
+    void getRepsAndWeight(Scene exerciseSelectionScene, String exerciseName, int numberOfSets) {
     	// get the number of repetitions and weight lifted for each set of a particular exercise
     	// add this data into an arrayList of Strength exercises, maybe use hashmap with key being exercise name?
     	// if there is enough code duplication then maybe pull set creation into another method?    	
     	VBox allRows = new VBox();
-    	Label repsAndWeightHeaderLabel = new Label("Sets \t\t Weight (lbs)");
+    	Label repsAndWeightHeaderLabel = new Label("Sets \t\t\t\t\t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
+    	allRows.getChildren().add(repsAndWeightHeaderLabel);
     	ArrayList<TextField> repsTextFields = new ArrayList<TextField>();
     	ArrayList<TextField> weightTextFields = new ArrayList<TextField>();
 
     	int rowCounter = 0;
     	while(rowCounter < numberOfSets) {
     		HBox setsRow = new HBox();
+    		setsRow.setSpacing(10.0);
     		
     		Label setLabel = new Label("Set " + (rowCounter + 1));
     		TextField reps = new TextField();
     		reps.setPromptText("Reps"); // these prompt text might be uneccessary
     		repsTextFields.add(reps);
+    		Label xLabel = new Label("X");
+    		// how to set font: https://coderslegacy.com/java/javafx-font/
+    		xLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 20));
     		TextField weight = new TextField();
     		weight.setPromptText("Weight (lbs)");
     		weightTextFields.add(weight);
-    		
-    		
-    		setsRow.getChildren().addAll(setLabel, reps, weight);
+    	
+    		setsRow.getChildren().addAll(setLabel, reps, xLabel, weight);
     		
     		allRows.getChildren().add(setsRow);
     		rowCounter++;
     	}
     	
     	Button doneButton = new Button("Done");
-    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, repsTextFields, weightTextFields));
+
+    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exerciseName, repsTextFields, weightTextFields));
     	// need some kind of method for switching back to the exerciseSelection scene
     	allRows.getChildren().add(doneButton);
     	
@@ -112,7 +135,9 @@ public class WorkoutSelectionController {
     		// need to validate the input of the textfields so that they only allow integers
     		// probably pull the input validation into a class like the "Grade" class in the gradeCalculator
     		// other option is to use integer choicebox for number of sets, but this way makes the project look better
-    		startExercise.setOnAction(startExerciseEvent -> getRepsAndWeight(applicationStage.getScene(), Integer.parseInt(numberOfSetsTextfield.getText())));
+    		String exerciseName = choiceBoxOptions.toString();
+//    		int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText()); // this breaks the code when passing is as an argument, don't know why
+    		startExercise.setOnAction(startExerciseEvent -> getRepsAndWeight(applicationStage.getScene(), exerciseName, Integer.parseInt(numberOfSetsTextfield.getText())));
     		
     		exerciseRow.getChildren().addAll(choiceBoxOptions, numberOfSetsTextfield, startExercise);
     		

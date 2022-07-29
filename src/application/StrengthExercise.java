@@ -10,7 +10,8 @@ public class StrengthExercise {
 		this.exerciseName = exerciseName;
 	}
 	
-	public StrengthExercise(int reps, double weight) {
+	public StrengthExercise(String exerciseName, int reps, double weight) {
+		this.exerciseName = new String(exerciseName);
 		this.weight = weight;
 		this.repetitions = reps;
 	}
