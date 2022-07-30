@@ -48,7 +48,7 @@ public class WorkoutSelectionController {
     	// now add the above ArrayList to another ArrayList that will store all of the exercises
     	// actually this could just be an ArrayList of StrengthExercises, not a nested ArrayList
     	
-    	// set the value of allExercises at this index
+    	// set the value of allExercises at this index, this needs to be initialized
     	allExercises.set(exerciseNumber, exercisesDone);
     	
     	
@@ -60,7 +60,8 @@ public class WorkoutSelectionController {
     void getRepsAndWeight(Scene exerciseSelectionScene, String exerciseName, int numberOfSets, int exerciseNumber) {
     	// get the number of repetitions and weight lifted for each set of a particular exercise
     	// add this data into an arrayList of Strength exercises, maybe use hashmap with key being exercise name?
-    	// if there is enough code duplication then maybe pull set creation into another method?    	
+    	// if there is enough code duplication then maybe pull set creation into another method?   
+    	
     	VBox allRows = new VBox();
     	Label repsAndWeightHeaderLabel = new Label("Sets \t\t\t\t\t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
     	allRows.getChildren().add(repsAndWeightHeaderLabel);
