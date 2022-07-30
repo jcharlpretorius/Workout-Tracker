@@ -8,9 +8,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-//import javafx.fxml.FXMLLoader;
-//import javafx.geometry.Pos;
-//import javafx.scene.Parent;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -40,7 +40,7 @@ public class WorkoutSelectionViewController {
     }
 
     @FXML
-    void getExercises(ActionEvent event) throws IOException {
+    void getExercises(ActionEvent event) {
     	// remove throws IOException if no longer injecting controller
     	Scene workoutSelection = applicationStage.getScene();
     	VBox contents = new VBox();
@@ -92,19 +92,26 @@ public class WorkoutSelectionViewController {
     	}
     	
     	HBox buttonBox = new HBox();
+    	
     	// do calculations and go to summary window
     	Button finishWorkoutButton = new Button("Finish Workout");
-    	// this should go to the workout summary scene, create a new method for that
-    	finishWorkoutButton.setOnAction(doneEvent -> finishWorkout());// call some function
+    	finishWorkoutButton.setOnAction(doneEvent -> {
+    		// try catch needed because of controller injection in finishWorkout()
+    		try {
+				finishWorkout();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
     	
-    	// go back to the workout selection window
+    	// go back to the workout selection window. If this breaks things it could be removed later
     	Button exitWorkout = new Button("Exit Workout");
-//    	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
     	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
     	buttonBox.getChildren().addAll(exitWorkout, finishWorkoutButton);
     	contents.getChildren().add(buttonBox);
     	
-    	// create a new scene
+    	// create and set the new scene 
     	Scene exerciseSelectionScene = new Scene(contents);
     	applicationStage.setScene(exerciseSelectionScene);
     	
@@ -184,6 +191,25 @@ public class WorkoutSelectionViewController {
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
+    	void finishWorkout() throws IOException {
+    	// change the scene to the workout Summary 
+    	// make sure to validate input here as well. all exercises should have a valid number entered in the sets textField
+    	// and the Workout class should have its allExercises HashMap populated for that exercise number
+    	// creating an instance of our WorkoutSummaryController
+        //from https://www.youtube.com/watch?v=wxhGKR3PQpo
+    	FXMLLoader loader = new FXMLLoader();
+    	loader.setLocation(getClass().getResource("WorkoutSummaryView.fxml"));
+//    	Parent root = loader.load();
+    	WorkoutSummaryViewController summaryController = loader.getController();
+    	// pass workout data to the next controller
+//    	summaryController(workout);
+
+    	System.out.println(workout.getAllExercises());
+    	System.out.println(workout.toString());
+    	System.out.println(workout.getAllExercises().values());
+    }
+    
+    
 //    @FXML // probably don't need fxml tag here
     public ObservableList<String> createExerciseArrayList() {
     	// temporary solution for populating exercise choices - used in choicebox
@@ -215,10 +241,7 @@ public class WorkoutSelectionViewController {
 //    	return listOfExercises;
     }
     
-    public void finishWorkout() {
-    	// change the scene
-    	System.out.println();
-    }
+  
     public void setApplicationStage(Stage stage) {
     	this.applicationStage = stage;
     }

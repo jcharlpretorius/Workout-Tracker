@@ -49,4 +49,22 @@ public class Workout {
 		// I don't know if this should be changed to prevent privacy leak..
 		return this.allExercises;
 	}
+	
+	public String toString() {
+		// make sure allExercises is not null
+		String str = "";
+		if (!this.allExercises.isEmpty()) {
+//			for(int i = 0; i < this.allExercises.size(); i++)
+			this.allExercises.forEach((exerciseNumber, strengthExercisesArrayList) -> {
+				// why can't StrengthExercise be seen as a valid type?
+				String output = "";
+				for (int i = 0; i < strengthExercisesArrayList.size(); i++) {
+					output += "Exercises number: " + exerciseNumber + ", " + strengthExercisesArrayList.get(i).toString()
+							+ "\n";
+				}
+				
+			});
+		}
+		return str;
+	}
 }
