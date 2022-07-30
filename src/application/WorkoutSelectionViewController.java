@@ -1,10 +1,13 @@
 package application;
 
+import java.io.IOException;
 import java.util.*;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -13,11 +16,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
 
-public class WorkoutSelectionController {
-	// variable for the controller to access the stage
-	Stage applicationStage;
-	ArrayList<ArrayList<StrengthExercise>> allExercises = new ArrayList<ArrayList<StrengthExercise>>(); // the ArrayList that stores all of the exercises done in the workout
-//	ArrayList<StrengthExercise> allExercises = new ArrayList<StrengthExercise>();
+public class WorkoutSelectionViewController {
+	private Stage applicationStage;
+	private Parent root;
+//	private Scene workoutSelectionScene = applicationStage.getScene();
+
+	//	ArrayList<StrengthExercise> allExercises = new ArrayList<StrengthExercise>();
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
     
@@ -27,36 +31,96 @@ public class WorkoutSelectionController {
     @FXML
     private void exitWorkout(Scene workoutSelectionScene) {
     	// change scene back to work out selection scene
+    	
     	applicationStage.setScene(workoutSelectionScene);
     }
     
-    void storeSets(Scene exerciseSelectionScene, String exerciseName, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields, int exerciseNumber) {
-    	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
-    	// change name depending on what this does.
-    	// create exercise objects
-    	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
-    	
+    
    
-    	// create StrengthExercise objects from text field inputs and add them to the ArrayList of all exercises 
-    	for (int i = 0; i < repsTextFields.size(); i++) {
-    		int reps = Integer.parseInt(repsTextFields.get(i).getText());
-    		double weight = Double.parseDouble(weightTextFields.get(i).getText());
-    		StrengthExercise exercise = new StrengthExercise(exerciseName, reps, weight);
-    		exercisesDone.add(exercise);
+    
+
+    @FXML
+    void getExercises(ActionEvent event) throws IOException {
+    	// get the scene and store it in a variable so you can switch back to it after?
+    	// We should create a new scene for the sets/reps/weighs - but for now just go back to main scene
+    	
+    	Scene workoutSelection = applicationStage.getScene();
+    	
+    	// add exercise choices to the choicebox
+//    	exerciseChoices.getItems().addAll(createExerciseArrayList());
+    	
+    	
+    	VBox contents = new VBox();
+//    	contents.setSpacing(10);
+//    	contents.setAlignment(Pos.CENTER); // possible alignment- make it look nice later
+    	// create hashmap to store exercise types chosen and number of sets
+    	//HashMap<String, ArrayList> later create this and pass into workout summary?
+    	
+    	ArrayList<String> chosenExercises = new ArrayList<String>();
+    	ArrayList<TextField> setsTextFields = new ArrayList<TextField>();
+    	
+    	// tabs in label should be removed once the layout is changed to look nice
+    	Label exerciseChoiceLabel = new Label("Exercise \t Number of Sets \t"); 
+    	contents.getChildren().add(exerciseChoiceLabel);
+    	
+    	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
+    	
+    	
+    	// creating an instance of our WorkoutSummaryController:
+    	// from https://www.youtube.com/watch?v=wxhGKR3PQpo
+//    	FXMLLoader loader = new FXMLLoader(getClass().getResource("WorkoutSummaryView.fxml"));
+//    	root = loader.load();
+    	FXMLLoader loader = new FXMLLoader();
+    	loader.setLocation(getClass().getResource("WorkoutSummaryView.fxml"));
+    	Parent root = loader.load();
+    	WorkoutSummaryViewController summaryController = loader.getController();
+    	summaryController.initializeAllExercises(numberOfExercises);
+    	
+    	int rowCounter = 0;
+    	while(rowCounter < numberOfExercises) {
+    		HBox exerciseRow = new HBox();
+    		
+    		ChoiceBox<StrengthExercise> choiceBoxOptions = new ChoiceBox<StrengthExercise>();
+    		choiceBoxOptions.getItems().addAll(createExerciseArrayList());
+    		
+    		TextField numberOfSetsTextfield = new TextField(); // should only take type int
+    		setsTextFields.add(numberOfSetsTextfield); // unused arrayList, maybe needed for summary?
+    		
+    		Button startExercise = new Button("Start Exercise");
+    		
+    		// need to validate the input of the textfields so that they only allow integers
+    		// probably pull the input validation into a class like the "Grade" class in the gradeCalculator
+    		// other option is to use integer choicebox for number of sets, but this way makes the project look better
+    		String exerciseName = choiceBoxOptions.toString();
+//    		int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText()); // this breaks the code when passing is as an argument, don't know why
+    		int exerciseNumber = rowCounter + 1;
+    		startExercise.setOnAction(startExerciseEvent -> getRepsAndWeight(applicationStage.getScene(), exerciseName, Integer.parseInt(numberOfSetsTextfield.getText()), exerciseNumber));
+    		
+    		exerciseRow.getChildren().addAll(choiceBoxOptions, numberOfSetsTextfield, startExercise);
+    		
+    		contents.getChildren().add(exerciseRow);
+    		rowCounter++;
     	}
     	
-    	// now add the above ArrayList to another ArrayList that will store all of the exercises
-    	// actually this could just be an ArrayList of StrengthExercises, not a nested ArrayList
+    	HBox buttonBox = new HBox();
+    	// do calculations and go to summary window
+    	Button finishWorkoutButton = new Button("Finish Workout");
+    	// this should go to the workout summary scene, create a new method for that
+    	finishWorkoutButton.setOnAction(doneEvent -> finishWorkout());// call some function
     	
-    	// set the value of allExercises at this index, this needs to be initialized
-    	allExercises.set(exerciseNumber, exercisesDone);
+    	// go back to the workout selection window
+    	Button exitWorkout = new Button("Exit Workout");
+//    	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
+    	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
+    	buttonBox.getChildren().addAll(exitWorkout, finishWorkoutButton);
+    	contents.getChildren().add(buttonBox);
     	
-    	
-    	
-    	// if no errors after input validation...
+    	// create a new scene
+    	Scene exerciseSelectionScene = new Scene(contents);
     	applicationStage.setScene(exerciseSelectionScene);
+    	
     }
-   
+    
     void getRepsAndWeight(Scene exerciseSelectionScene, String exerciseName, int numberOfSets, int exerciseNumber) {
     	// get the number of repetitions and weight lifted for each set of a particular exercise
     	// add this data into an arrayList of Strength exercises, maybe use hashmap with key being exercise name?
@@ -100,82 +164,6 @@ public class WorkoutSelectionController {
     	applicationStage.setScene(repsAndWeights);
     	 
     }
-
-    @FXML
-    void getExercises(ActionEvent event) {
-    	// get the scene and store it in a variable so you can switch back to it after?
-    	// We should create a new scene for the sets/reps/weighs - but for now just go back to main scene
-    	Scene workoutSelection = applicationStage.getScene();
-    	
-    	// add exercise choices to the choicebox
-//    	exerciseChoices.getItems().addAll(createExerciseArrayList());
-    	
-    	
-    	VBox contents = new VBox();
-//    	contents.setSpacing(10);
-//    	contents.setAlignment(Pos.CENTER); // possible alignment- make it look nice later
-    	// create hashmap to store exercise types chosen and number of sets
-    	//HashMap<String, ArrayList> later create this and pass into workout summary?
-    	
-    	ArrayList<String> chosenExercises = new ArrayList<String>();
-    	ArrayList<TextField> setsTextFields = new ArrayList<TextField>();
-    	
-    	// tabs in label should be removed once the layout is changed to look nice
-    	Label exerciseChoiceLabel = new Label("Exercise \t Number of Sets \t"); 
-    	contents.getChildren().add(exerciseChoiceLabel);
-    	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
-    	int rowCounter = 0;
-    	while(rowCounter < numberOfExercises) {
-    		HBox exerciseRow = new HBox();
-    		
-    		ChoiceBox<StrengthExercise> choiceBoxOptions = new ChoiceBox<StrengthExercise>();
-    		choiceBoxOptions.getItems().addAll(createExerciseArrayList());
-    		
-    		TextField numberOfSetsTextfield = new TextField(); // should only take type int
-    		setsTextFields.add(numberOfSetsTextfield); // unused arrayList, maybe needed for summary?
-    		
-    		Button startExercise = new Button("Start Exercise");
-    		
-    		// need to validate the input of the textfields so that they only allow integers
-    		// probably pull the input validation into a class like the "Grade" class in the gradeCalculator
-    		// other option is to use integer choicebox for number of sets, but this way makes the project look better
-    		String exerciseName = choiceBoxOptions.toString();
-//    		int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText()); // this breaks the code when passing is as an argument, don't know why
-    		int exerciseNumber = rowCounter + 1;
-    		startExercise.setOnAction(startExerciseEvent -> getRepsAndWeight(applicationStage.getScene(), exerciseName, Integer.parseInt(numberOfSetsTextfield.getText()), exerciseNumber));
-    		
-    		exerciseRow.getChildren().addAll(choiceBoxOptions, numberOfSetsTextfield, startExercise);
-    		
-    		contents.getChildren().add(exerciseRow);
-    		rowCounter++;
-    	}
-    	
-    	HBox buttonBox = new HBox();
-    	// do calculations and go to summary window
-    	Button finishWorkoutButton = new Button("Finish Workout");
-    	// this should go to the workout summary scene, create a new method for that
-//    	finishWorkoutButton.setOnAction(doneEvent -> );// call some function
-    	
-    	// go back to the workout selection window
-    	Button exitWorkout = new Button("Exit Workout");
-    	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
-    	
-    	buttonBox.getChildren().addAll(exitWorkout, finishWorkoutButton);
-    	
-  
-    	contents.getChildren().add(buttonBox);
-    	
-    	
-    	//populate an arraylist of strength exercises
-//    	ArrayList<StrengthExercise> exercisesChosen = new ArrayList<StrengthExercise>();
-//    	ArrayList<ChoiceBox> exercisesChosen = new ArrayList<ChoiceBox>(); 
-    	// label for the title/name of boxes
-
-    	// create a new scene
-    	Scene exerciseSelectionScene = new Scene(contents);
-    	applicationStage.setScene(exerciseSelectionScene);
-    	
-    }
     
     @FXML
     ArrayList<StrengthExercise> createExerciseArrayList() {
@@ -202,5 +190,44 @@ public class WorkoutSelectionController {
 //    	System.out.println(listOfExercises);
     	return listOfExercises;
     }
-
+    
+    void storeSets(Scene exerciseSelectionScene, String exerciseName, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields, int exerciseNumber) {
+    	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
+    	// change name depending on what this does.
+    	// create exercise objects
+    	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
+    	
+   
+    	// create StrengthExercise objects from text field inputs and add them to the ArrayList of all exercises 
+    	for (int i = 0; i < repsTextFields.size(); i++) {
+    		int reps = Integer.parseInt(repsTextFields.get(i).getText());
+    		double weight = Double.parseDouble(weightTextFields.get(i).getText());
+    		StrengthExercise exercise = new StrengthExercise(exerciseName, reps, weight);
+    		exercisesDone.add(exercise);
+    	}
+    	
+    	// now add the above ArrayList to another ArrayList that will store all of the exercises
+    	// actually this could just be an ArrayList of StrengthExercises, not a nested ArrayList
+    	
+    	// set the value of allExercises at this index, this needs to be initialized
+    	summaryController.setAllExercises.set(exerciseNumber, exercisesDone);
+    	
+    	
+    	
+    	// if no errors after input validation...
+    	applicationStage.setScene(exerciseSelectionScene);
+    }
+    
+    public void finishWorkout() {
+    	// change the scene
+    	System.out.println();
+    }
+    public void setApplicationStage(Stage stage) {
+    	this.applicationStage = stage;
+    }
+    
+    public Stage getApplicationStage() {
+    	return this.applicationStage;
+    }
+   
 }
