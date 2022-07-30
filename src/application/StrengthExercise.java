@@ -16,7 +16,16 @@ public class StrengthExercise {
 		this.repetitions = reps;
 	}
 	
-	public String toString() {
+	public String getName() {
 		return new String(this.exerciseName);
+	}
+	
+	public String toString(Boolean t) {
+		// can you somehow use overloading/overriding instead?
+		return this.exerciseName + "; reps: " + this.repetitions + ", weight: " + this.weight;
+	}
+	
+	public String toString() {
+		return this.exerciseName;
 	}
 }

@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 
 public class WorkoutSelectionViewController {
 	private Stage applicationStage;
+	private Workout workout = new Workout();
 	private Parent root;
 //	private Scene workoutSelectionScene = applicationStage.getScene();
 
@@ -34,22 +35,11 @@ public class WorkoutSelectionViewController {
     	
     	applicationStage.setScene(workoutSelectionScene);
     }
-    
-    
-   
-    
 
     @FXML
     void getExercises(ActionEvent event) throws IOException {
-    	// get the scene and store it in a variable so you can switch back to it after?
-    	// We should create a new scene for the sets/reps/weighs - but for now just go back to main scene
-    	
+    	// remove throws IOException if no longer injecting controller
     	Scene workoutSelection = applicationStage.getScene();
-    	
-    	// add exercise choices to the choicebox
-//    	exerciseChoices.getItems().addAll(createExerciseArrayList());
-    	
-    	
     	VBox contents = new VBox();
 //    	contents.setSpacing(10);
 //    	contents.setAlignment(Pos.CENTER); // possible alignment- make it look nice later
@@ -70,17 +60,25 @@ public class WorkoutSelectionViewController {
     	// from https://www.youtube.com/watch?v=wxhGKR3PQpo
 //    	FXMLLoader loader = new FXMLLoader(getClass().getResource("WorkoutSummaryView.fxml"));
 //    	root = loader.load();
-    	FXMLLoader loader = new FXMLLoader();
-    	loader.setLocation(getClass().getResource("WorkoutSummaryView.fxml"));
-    	Parent root = loader.load();
-    	WorkoutSummaryViewController summaryController = loader.getController();
-    	summaryController.initializeAllExercises(numberOfExercises);
+//    	FXMLLoader loader = new FXMLLoader();
+//    	loader.setLocation(getClass().getResource("WorkoutSummaryView.fxml"));
+//    	Parent root = loader.load();
+//    	WorkoutSummaryViewController summaryController = loader.getController();
+//    	summaryController.initializeAllExercises(numberOfExercises);
     	
+//    	workout.initializeAllExercises(numberOfExercises);
+//    	System.out.println(numberOfExercises);
+//    	System.out.println(workout.getAllExercises());
+//    	System.out.println(workout.getAllExercises().size());
+    	
+//    	HashMap<Integer, ArrayList> exercisesMap = new HashMap<Integer, ArrayList>(); 
     	int rowCounter = 0;
     	while(rowCounter < numberOfExercises) {
     		HBox exerciseRow = new HBox();
+    		ChoiceBox<String> choiceBoxOptions = new ChoiceBox<String>();
     		
-    		ChoiceBox<StrengthExercise> choiceBoxOptions = new ChoiceBox<StrengthExercise>();
+    		// This relies on the StrengthExercise toString() method to return only the name of the exercises
+    		// find a better way of getting the names of all exercises
     		choiceBoxOptions.getItems().addAll(createExerciseArrayList());
     		
     		TextField numberOfSetsTextfield = new TextField(); // should only take type int
@@ -88,16 +86,19 @@ public class WorkoutSelectionViewController {
     		
     		Button startExercise = new Button("Start Exercise");
     		
+    		
+    		
     		// need to validate the input of the textfields so that they only allow integers
     		// probably pull the input validation into a class like the "Grade" class in the gradeCalculator
     		// other option is to use integer choicebox for number of sets, but this way makes the project look better
-    		String exerciseName = choiceBoxOptions.toString();
-//    		int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText()); // this breaks the code when passing is as an argument, don't know why
+    		
+//    		int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText()); // this breaks the code when passing it as an argument, don't know why
     		int exerciseNumber = rowCounter + 1;
+    		String exerciseName = choiceBoxOptions.toString(); /// this is wrong
+//    		exercisesMap.put(exerciseNumber, );
     		startExercise.setOnAction(startExerciseEvent -> getRepsAndWeight(applicationStage.getScene(), exerciseName, Integer.parseInt(numberOfSetsTextfield.getText()), exerciseNumber));
     		
     		exerciseRow.getChildren().addAll(choiceBoxOptions, numberOfSetsTextfield, startExercise);
-    		
     		contents.getChildren().add(exerciseRow);
     		rowCounter++;
     	}
@@ -165,10 +166,46 @@ public class WorkoutSelectionViewController {
     	 
     }
     
+    void storeSets(Scene exerciseSelectionScene, String exerciseName, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields, int exerciseNumber) {
+    	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
+    	// change name depending on what this does.
+    	// create exercise objects
+    	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
+    	
+   
+    	// create StrengthExercise objects from text field inputs and add them to the ArrayList of all exercises 
+    	for (int i = 0; i < repsTextFields.size(); i++) {
+    		int reps = Integer.parseInt(repsTextFields.get(i).getText());
+    		System.out.println(reps);
+    		double weight = Double.parseDouble(weightTextFields.get(i).getText());
+    		System.out.println(weight);
+
+    		StrengthExercise exercise = new StrengthExercise(exerciseName, reps, weight);
+    		System.out.println(exercise.toString(true));
+    		exercisesDone.add(exercise);
+    	}
+    	
+    	workout.setAllExercises(exerciseNumber, exercisesDone);
+//    	System.out.println(workout.getAllExercises().size());
+//    	System.out.println(workout.getAllExercises());
+//    	System.out.println(workout.getAllExercises().get(exerciseNumber));
+    	
+    	// now add the above ArrayList to another ArrayList that will store all of the exercises    	
+    	// set the value of allExercises at this index
+//    	System.out.println(workout.getAllExercises());
+//    	System.out.println(workout.getAllExercises().size());
+//    	workout.setAllExercises(exerciseNumber, exercisesDone);
+    	
+    	
+    	
+    	// if no errors after input validation...
+    	applicationStage.setScene(exerciseSelectionScene);
+    }
+    
     @FXML
-    ArrayList<StrengthExercise> createExerciseArrayList() {
+    ArrayList<String> createExerciseArrayList() {
     	// temporary solution for populating exercise choices - used in choicebox
-    	// pull this out to a method or class later..
+    	// pull this out to a method or class later.. probably Workout
     	ArrayList<String> exercises = new ArrayList<String>();
     	exercises.add("Squat");
     	exercises.add("Bench Press");
@@ -181,41 +218,15 @@ public class WorkoutSelectionViewController {
     	exercises.add("Pull ups");
     	exercises.add("Dips");
     	
+    	return exercises;
     	
-    	ArrayList<StrengthExercise> listOfExercises = new ArrayList<StrengthExercise>();
-    	for (int i = 0; i < exercises.size(); i++) {
-    		// create new strength exercise and add it to the arrayList
-    		listOfExercises.add(new StrengthExercise(exercises.get(i)));
-    	}
-//    	System.out.println(listOfExercises);
-    	return listOfExercises;
-    }
-    
-    void storeSets(Scene exerciseSelectionScene, String exerciseName, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields, int exerciseNumber) {
-    	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
-    	// change name depending on what this does.
-    	// create exercise objects
-    	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
-    	
-   
-    	// create StrengthExercise objects from text field inputs and add them to the ArrayList of all exercises 
-    	for (int i = 0; i < repsTextFields.size(); i++) {
-    		int reps = Integer.parseInt(repsTextFields.get(i).getText());
-    		double weight = Double.parseDouble(weightTextFields.get(i).getText());
-    		StrengthExercise exercise = new StrengthExercise(exerciseName, reps, weight);
-    		exercisesDone.add(exercise);
-    	}
-    	
-    	// now add the above ArrayList to another ArrayList that will store all of the exercises
-    	// actually this could just be an ArrayList of StrengthExercises, not a nested ArrayList
-    	
-    	// set the value of allExercises at this index, this needs to be initialized
-    	summaryController.setAllExercises.set(exerciseNumber, exercisesDone);
-    	
-    	
-    	
-    	// if no errors after input validation...
-    	applicationStage.setScene(exerciseSelectionScene);
+//    	ArrayList<StrengthExercise> listOfExercises = new ArrayList<StrengthExercise>();
+//    	for (int i = 0; i < exercises.size(); i++) {
+//    		// create new strength exercise and add it to the arrayList
+//    		listOfExercises.add(new StrengthExercise(exercises.get(i)));
+//    	}
+////    	System.out.println(listOfExercises);
+//    	return listOfExercises;
     }
     
     public void finishWorkout() {
