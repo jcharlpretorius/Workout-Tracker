@@ -41,7 +41,6 @@ public class WorkoutSelectionViewController {
 
     @FXML
     void getExercises(ActionEvent event) {
-    	// remove throws IOException if no longer injecting controller
     	Scene workoutSelection = applicationStage.getScene();
     	VBox contents = new VBox();
 //    	contents.setSpacing(10);
@@ -199,14 +198,19 @@ public class WorkoutSelectionViewController {
         //from https://www.youtube.com/watch?v=wxhGKR3PQpo
     	FXMLLoader loader = new FXMLLoader();
     	loader.setLocation(getClass().getResource("WorkoutSummaryView.fxml"));
-//    	Parent root = loader.load();
+    	Parent root = loader.load();
     	WorkoutSummaryViewController summaryController = loader.getController();
     	// pass workout data to the next controller
-//    	summaryController(workout);
-
-    	System.out.println(workout.getAllExercises());
-    	System.out.println(workout.toString());
-    	System.out.println(workout.getAllExercises().values());
+    	summaryController.setAllExercises(workout.getAllExercises());
+//    	summaryController.setApplicationStage(applicationStage);
+//    	summaryController.getApplicationStage()
+    	// maybe do similar to what is in main, passing the primary stage to the controller, for restart button to take you back 
+    	Scene workoutSummaryScene = new Scene(root);
+    	applicationStage.setScene(workoutSummaryScene);
+    	// print statements for debugging
+//    	System.out.println(workout.getAllExercises());
+//    	System.out.println(workout.toString());
+//    	System.out.println(workout.getAllExercises().values());
     }
     
     

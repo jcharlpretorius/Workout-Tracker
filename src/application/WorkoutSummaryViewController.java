@@ -1,24 +1,24 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class WorkoutSummaryViewController {
 	private Stage applicationStage;
-//	private ArrayList<ArrayList<StrengthExercise>> allExercises;// = new ArrayList<ArrayList<StrengthExercise>>(); // the ArrayList that stores all of the exercises done in the workout
-//	private Scene scene;
-//	private Parent root;
+	private HashMap<Integer, ArrayList<StrengthExercise>> allExercises;
 	
-//	public void initializeAllExercises(int numberOfExercises) {
-//		// initialize ArrayList size to the number of exercises selected
-//		this.allExercises = new ArrayList<ArrayList<StrengthExercise>>(numberOfExercises);
-//	}
-// 	
-//	public void setAllExercises() {
-//		// 
-//	}
+	@FXML
+	private Label workoutSummaryTitleLabel;
+	
+	public void setAllExercises(HashMap<Integer, ArrayList<StrengthExercise>> workout) {
+		this.allExercises = workout;
+	}
+	
 	public void setApplicationStage(Stage stage) {
     	this.applicationStage = stage;
     }

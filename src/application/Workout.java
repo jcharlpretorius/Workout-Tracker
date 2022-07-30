@@ -2,11 +2,8 @@ package application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+// stores workout data
 public class Workout {
-	// use this to contain most of the variables you are passing between the methods
-	// getExercises(), getRepsAndWeight(), and storeSets()
-//	private ArrayList<ArrayList<StrengthExercise>> allExercises; 
 	private HashMap<Integer, ArrayList<StrengthExercise>> allExercises;
 	
 	public Workout() {
@@ -31,7 +28,7 @@ public class Workout {
 //		return this.allExercises;
 //	}
 	public void setAllExercises(int exerciseNumber, ArrayList<StrengthExercise> exercisesDone) {
-		// add ArrayList of StrengthExercises (represents sets) to the nested ArrayList
+		// add ArrayList of StrengthExercises (represents sets) to the HashMap
 		
 		if (!this.getAllExercises().isEmpty()) {
 			// remove sets if already added -> prevents adding another set when re-entering the set window
