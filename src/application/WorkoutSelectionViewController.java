@@ -3,11 +3,14 @@ package application;
 import java.io.IOException;
 import java.util.*;
 
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
+//import javafx.fxml.FXMLLoader;
+//import javafx.geometry.Pos;
+//import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -19,7 +22,7 @@ import javafx.stage.Stage;
 public class WorkoutSelectionViewController {
 	private Stage applicationStage;
 	private Workout workout = new Workout();
-	private Parent root;
+//	private Parent root;
 //	private Scene workoutSelectionScene = applicationStage.getScene();
 
 	//	ArrayList<StrengthExercise> allExercises = new ArrayList<StrengthExercise>();
@@ -55,32 +58,14 @@ public class WorkoutSelectionViewController {
     	
     	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
     	
-    	
-    	// creating an instance of our WorkoutSummaryController:
-    	// from https://www.youtube.com/watch?v=wxhGKR3PQpo
-//    	FXMLLoader loader = new FXMLLoader(getClass().getResource("WorkoutSummaryView.fxml"));
-//    	root = loader.load();
-//    	FXMLLoader loader = new FXMLLoader();
-//    	loader.setLocation(getClass().getResource("WorkoutSummaryView.fxml"));
-//    	Parent root = loader.load();
-//    	WorkoutSummaryViewController summaryController = loader.getController();
-//    	summaryController.initializeAllExercises(numberOfExercises);
-    	
-//    	workout.initializeAllExercises(numberOfExercises);
-//    	System.out.println(numberOfExercises);
-//    	System.out.println(workout.getAllExercises());
-//    	System.out.println(workout.getAllExercises().size());
-    	
-//    	HashMap<Integer, ArrayList> exercisesMap = new HashMap<Integer, ArrayList>(); 
     	int rowCounter = 0;
     	while(rowCounter < numberOfExercises) {
     		HBox exerciseRow = new HBox();
+    		
     		ChoiceBox<String> choiceBoxOptions = new ChoiceBox<String>();
-    		
-    		// This relies on the StrengthExercise toString() method to return only the name of the exercises
-    		// find a better way of getting the names of all exercises
     		choiceBoxOptions.getItems().addAll(createExerciseArrayList());
-    		
+    		choiceBoxOptions.getSelectionModel().select(0); // sets default value in choiceBox
+
     		TextField numberOfSetsTextfield = new TextField(); // should only take type int
     		setsTextFields.add(numberOfSetsTextfield); // unused arrayList, maybe needed for summary?
     		
@@ -94,9 +79,12 @@ public class WorkoutSelectionViewController {
     		
 //    		int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText()); // this breaks the code when passing it as an argument, don't know why
     		int exerciseNumber = rowCounter + 1;
-    		String exerciseName = choiceBoxOptions.toString(); /// this is wrong
-//    		exercisesMap.put(exerciseNumber, );
-    		startExercise.setOnAction(startExerciseEvent -> getRepsAndWeight(applicationStage.getScene(), exerciseName, Integer.parseInt(numberOfSetsTextfield.getText()), exerciseNumber));
+
+    		startExercise.setOnAction(startExerciseEvent -> {
+    			ExerciseSets exercise = new ExerciseSets(choiceBoxOptions.getValue(), Integer.parseInt(numberOfSetsTextfield.getText()), exerciseNumber);
+    			int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText());    			
+    			getRepsAndWeight(applicationStage.getScene(), exercise);
+    		});
     		
     		exerciseRow.getChildren().addAll(choiceBoxOptions, numberOfSetsTextfield, startExercise);
     		contents.getChildren().add(exerciseRow);
@@ -122,11 +110,11 @@ public class WorkoutSelectionViewController {
     	
     }
     
-    void getRepsAndWeight(Scene exerciseSelectionScene, String exerciseName, int numberOfSets, int exerciseNumber) {
+    void getRepsAndWeight(Scene exerciseSelectionScene, ExerciseSets exercise) {
     	// get the number of repetitions and weight lifted for each set of a particular exercise
     	// add this data into an arrayList of Strength exercises, maybe use hashmap with key being exercise name?
     	// if there is enough code duplication then maybe pull set creation into another method?   
-    	
+    	// add label with the name of the exercises, ie "Squats"
     	VBox allRows = new VBox();
     	Label repsAndWeightHeaderLabel = new Label("Sets \t\t\t\t\t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
     	allRows.getChildren().add(repsAndWeightHeaderLabel);
@@ -134,7 +122,7 @@ public class WorkoutSelectionViewController {
     	ArrayList<TextField> weightTextFields = new ArrayList<TextField>();
 
     	int rowCounter = 0;
-    	while(rowCounter < numberOfSets) {
+    	while(rowCounter < exercise.getNumberOfSets()) {
     		HBox setsRow = new HBox();
     		setsRow.setSpacing(10.0);
     		
@@ -143,7 +131,7 @@ public class WorkoutSelectionViewController {
     		reps.setPromptText("Reps"); // these prompt text might be uneccessary
     		repsTextFields.add(reps);
     		Label xLabel = new Label("X");
-    		// how to set font: https://coderslegacy.com/java/javafx-font/
+    		// how to set font style: https://coderslegacy.com/java/javafx-font/
     		xLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 20));
     		TextField weight = new TextField();
     		weight.setPromptText("Weight (lbs)");
@@ -157,7 +145,7 @@ public class WorkoutSelectionViewController {
     	
     	Button doneButton = new Button("Done");
 
-    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exerciseName, repsTextFields, weightTextFields, exerciseNumber));
+    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields));
     	// need some kind of method for switching back to the exerciseSelection scene
     	allRows.getChildren().add(doneButton);
     	
@@ -166,7 +154,7 @@ public class WorkoutSelectionViewController {
     	 
     }
     
-    void storeSets(Scene exerciseSelectionScene, String exerciseName, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields, int exerciseNumber) {
+    void storeSets(Scene exerciseSelectionScene, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
     	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
     	// change name depending on what this does.
     	// create exercise objects
@@ -176,16 +164,12 @@ public class WorkoutSelectionViewController {
     	// create StrengthExercise objects from text field inputs and add them to the ArrayList of all exercises 
     	for (int i = 0; i < repsTextFields.size(); i++) {
     		int reps = Integer.parseInt(repsTextFields.get(i).getText());
-    		System.out.println(reps);
     		double weight = Double.parseDouble(weightTextFields.get(i).getText());
-    		System.out.println(weight);
-
-    		StrengthExercise exercise = new StrengthExercise(exerciseName, reps, weight);
-    		System.out.println(exercise.toString(true));
-    		exercisesDone.add(exercise);
+    		StrengthExercise se = new StrengthExercise(exercise.getExerciseName(), reps, weight);
+    		exercisesDone.add(se);
     	}
     	
-    	workout.setAllExercises(exerciseNumber, exercisesDone);
+    	workout.setAllExercises(exercise.getExerciseNumber(), exercisesDone);
 //    	System.out.println(workout.getAllExercises().size());
 //    	System.out.println(workout.getAllExercises());
 //    	System.out.println(workout.getAllExercises().get(exerciseNumber));
@@ -196,16 +180,16 @@ public class WorkoutSelectionViewController {
 //    	System.out.println(workout.getAllExercises().size());
 //    	workout.setAllExercises(exerciseNumber, exercisesDone);
     	
-    	
-    	
     	// if no errors after input validation...
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
-    @FXML
-    ArrayList<String> createExerciseArrayList() {
+//    @FXML // probably don't need fxml tag here
+    public ObservableList<String> createExerciseArrayList() {
     	// temporary solution for populating exercise choices - used in choicebox
     	// pull this out to a method or class later.. probably Workout
+    	
+    	
     	ArrayList<String> exercises = new ArrayList<String>();
     	exercises.add("Squat");
     	exercises.add("Bench Press");
@@ -217,8 +201,10 @@ public class WorkoutSelectionViewController {
     	exercises.add("Lateral Raises");
     	exercises.add("Pull ups");
     	exercises.add("Dips");
+    	ObservableList<String> exercisesList = FXCollections.observableArrayList(exercises);
     	
-    	return exercises;
+    	return exercisesList;
+   
     	
 //    	ArrayList<StrengthExercise> listOfExercises = new ArrayList<StrengthExercise>();
 //    	for (int i = 0; i < exercises.size(); i++) {
