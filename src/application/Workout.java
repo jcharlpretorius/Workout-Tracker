@@ -5,45 +5,59 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Workout {
-	private HashMap<Integer, ArrayList<StrengthExercise>> allExercises;
+	private ArrayList<ArrayList<StrengthExercise>> allExercises;
 	private HashMap<String, StrengthExercise> bestSets;
 	private int totalWeightLifted;
 	
 	public Workout() {
-		this.allExercises = new HashMap<Integer, ArrayList<StrengthExercise>>();
 	}
 
 	public void setAllExercises(int exerciseNumber, ArrayList<StrengthExercise> exercisesDone) {
 		// add ArrayList of StrengthExercises (represents sets) to the HashMap
-		
+		// // // // This is where I need to make big changes if not using hashmap
+		int index = exerciseNumber - 1;
 		if (!this.getAllExercises().isEmpty()) {
-			// remove sets if already added -> prevents adding another set when re-entering the set window
-			if (this.allExercises.containsKey(exerciseNumber)) {
-				this.allExercises.remove(exerciseNumber);
+			if (this.getAllExercises().size() > index) {
+				// remove set if already added to prevent adding another set when re-entering the set window
+				this.allExercises.remove(index);
+				this.allExercises.add(index, exercisesDone);
 			}
-			this.allExercises.put(exerciseNumber, exercisesDone);
+			this.allExercises.add(index, exercisesDone);
 		} else {
-			this.allExercises.put(exerciseNumber, exercisesDone);
+			this.allExercises.add(exercisesDone);
+
 		}
-		System.out.println(allExercises);
+//		if (!this.getAllExercises().isEmpty()) {
+//			// remove sets if already added -> prevents adding another set when re-entering the set window
+//			if (this.allExercises.containsKey(exerciseNumber)) {
+//				this.allExercises.remove(exerciseNumber);
+//			}
+//			this.allExercises.put(exerciseNumber, exercisesDone);
+//		} else {
+//			this.allExercises.put(exerciseNumber, exercisesDone);
+//		}
+//		System.out.println(allExercises);
 	}
 		
-	public HashMap<Integer, ArrayList<StrengthExercise>> getAllExercises() {
+	public ArrayList<ArrayList<StrengthExercise>> getAllExercises() {
 		// I don't know if this should be changed to prevent privacy leaks. 
 		return this.allExercises;
 	}
 	
 	public void setTotalWeightLifted() {
-		// iterate through the allExercises hashmap and add up all lifts
-		int sum = 0;
+		// iterate through the allExercises ArrayList and add up all lifts (repetitions multiplied by weight)
+//		System.out.println(allExercises);
+		int totalWeightLifted = 0;
 		if (!allExercises.isEmpty()) {
-			for (int i = 0; i < allExercises.size(); i++) {
-				for (StrengthExercise ex : allExercises.get(i)) {
-					sum += ex.getReps() * ex.getWeight();
+			for (ArrayList<StrengthExercise> set : allExercises) {
+				int weightLiftedPerSet = 0;
+				for (StrengthExercise ex : set) {
+					weightLiftedPerSet += ex.getReps() * ex.getWeight();
 				}
+				totalWeightLifted += weightLiftedPerSet;
 			}
 		}
-		this.totalWeightLifted = sum;
+		this.totalWeightLifted = totalWeightLifted;
 	}
 	
 	public int getTotalWeightLifted() {
@@ -93,20 +107,22 @@ public class Workout {
 	
 	public String toString() {
 		// make sure allExercises is not null
-		String str = "";
+		String output = "";
 		if (!this.allExercises.isEmpty()) {
-//			for(int i = 0; i < this.allExercises.size(); i++)
-			this.allExercises.forEach((exerciseNumber, strengthExercisesArrayList) -> {
-				// why can't StrengthExercise be seen as a valid type?
-				String output = "";
-				for (int i = 0; i < strengthExercisesArrayList.size(); i++) {
-					output += "Exercises number: " + exerciseNumber + ", " + strengthExercisesArrayList.get(i).toString()
-							+ "\n";
+			for (int i = 0; i < this.allExercises.size(); i++) {
+				String str = "";
+				for (int j = 0; j < this.allExercises.get(i).size(); j++) {
+					str += "Exercise number: " + i + ", " + this.allExercises.get(i).get(j).toString() + "\n";
 				}
-			});
-		} else {
-			str += "empty"; // remove later, for debugging
+			}
+		} 
+		return output;
+	}
+	
+	public void setNumberOfExercises(int numExercises) {
+		// initializes ArrayList size
+		if (this.allExercises == null) {
+			this.allExercises = new ArrayList<ArrayList<StrengthExercise>>(numExercises);
 		}
-		return str;
 	}
 }

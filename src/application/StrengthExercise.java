@@ -31,7 +31,7 @@ public class StrengthExercise {
 		return this.weight;
 	}
 	public String toString() {
-		return this.exerciseName + "; reps: " + this.repetitions + ", weight: " + this.weight;
+		return "(" + this.exerciseName + ": reps: " + this.repetitions + ", weight: " + this.weight + ")";
 	}
 	
 //	public String toString() {

@@ -54,6 +54,9 @@ public class WorkoutSelectionViewController {
     	
     	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
     	
+    	// initializes the size of the allExercises ArrayList
+    	workout.setNumberOfExercises(numberOfExercises);
+    	
     	int rowCounter = 0;
     	while(rowCounter < numberOfExercises) {
     		HBox exerciseRow = new HBox();
@@ -73,8 +76,8 @@ public class WorkoutSelectionViewController {
     		// probably pull the input validation into a class like the "Grade" class in the gradeCalculator
     		int exerciseNumber = rowCounter + 1;
     		startExercise.setOnAction(startExerciseEvent -> {
-    			ExerciseSets exercise = new ExerciseSets(choiceBoxOptions.getValue(), Integer.parseInt(numberOfSetsTextfield.getText()), exerciseNumber);
     			int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText());    			
+    			ExerciseSets exercise = new ExerciseSets(choiceBoxOptions.getValue(), numberOfSets, exerciseNumber);
     			getRepsAndWeight(applicationStage.getScene(), exercise);
     		});
     		
@@ -160,7 +163,13 @@ public class WorkoutSelectionViewController {
     	}
     	
     	workout.setAllExercises(exercise.getExerciseNumber(), exercisesDone);
-    	System.out.println(workout.toString());
+    	
+//    	System.out.println("toString: " + workout.toString());
+//    	System.out.println("getAllexercises: " + workout.getAllExercises());
+////    	workout.setTotalWeightLifted();
+//    	System.out.println("getTotalWeightLifted:" + workout.getTotalWeightLifted());
+//    	System.out.println("workout.getAllExercises().get(0) : " + workout.getAllExercises().get(0)); // returns null
+
 
 
     	// if no errors after input validation...
@@ -174,13 +183,17 @@ public class WorkoutSelectionViewController {
     	// and the Workout class should have its allExercises HashMap populated for that exercise number
     	
     	// calculate value in workout object
-//    	workout.setTotalWeightLifted(); // Cannot invoke "java.util.ArrayList.iterator()" because the return value of "java.util.HashMap.get(Object)" is null
+    	workout.setTotalWeightLifted(); // Cannot invoke "java.util.ArrayList.iterator()" because the return value of "java.util.HashMap.get(Object)" is null
 //    	workout.setBestSets();
     	System.out.println("print test");
     	System.out.println(workout.toString()); // why doesn't this print anything? the method calls don't work either
     	// not even the toString works, should print "empty" atleast...
-    	
-    	
+    	System.out.println("finish workout: getAllexercises: " + workout.getAllExercises());
+    	System.out.println("finish workout: getTotalWeightLifted:" + workout.getTotalWeightLifted());
+//    	int i = 1;
+//    	System.out.println(Integer.valueOf(i).getClass());
+//    	System.out.println(" finished workout.getAllExercises().get(i) : " + workout.getAllExercises().get(Integer.valueOf(0))); // returns null
+
     	
     	
     	// create workout summary scene:
