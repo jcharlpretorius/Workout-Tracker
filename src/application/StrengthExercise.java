@@ -2,15 +2,18 @@ package application;
 
 public class StrengthExercise {
 	// parent class for strength exercises
-	private double weight;
+	private int weight;
 	private int repetitions;
 	private String exerciseName;
+	
+	public StrengthExercise() {
+	}
 	
 	public StrengthExercise(String exerciseName) {
 		this.exerciseName = exerciseName;
 	}
 	
-	public StrengthExercise(String exerciseName, int reps, double weight) {
+	public StrengthExercise(String exerciseName, int reps, int weight) {
 		this.exerciseName = new String(exerciseName);
 		this.weight = weight;
 		this.repetitions = reps;
@@ -24,7 +27,7 @@ public class StrengthExercise {
 		return this.repetitions;
 	}
 	
-	public double getWeight() {
+	public int getWeight() {
 		return this.weight;
 	}
 	public String toString() {
