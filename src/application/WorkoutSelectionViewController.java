@@ -160,15 +160,28 @@ public class WorkoutSelectionViewController {
     	}
     	
     	workout.setAllExercises(exercise.getExerciseNumber(), exercisesDone);
+    	System.out.println(workout.toString());
+
 
     	// if no errors after input validation...
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
+    
     void finishWorkout() {
     	// change the scene to the workout Summary 
     	// make sure to validate input here as well. all exercises should have a valid number entered in the sets textField
     	// and the Workout class should have its allExercises HashMap populated for that exercise number
+    	
+    	// calculate value in workout object
+//    	workout.setTotalWeightLifted(); // Cannot invoke "java.util.ArrayList.iterator()" because the return value of "java.util.HashMap.get(Object)" is null
+//    	workout.setBestSets();
+    	System.out.println("print test");
+    	System.out.println(workout.toString()); // why doesn't this print anything? the method calls don't work either
+    	// not even the toString works, should print "empty" atleast...
+    	
+    	
+    	
     	
     	// create workout summary scene:
     		// most values are placeholders
@@ -180,11 +193,12 @@ public class WorkoutSelectionViewController {
 
     	Label congratsLabel = new Label("Congrats, you finished your workout!");
 		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 18));
+		VBox.setMargin(congratsLabel, new Insets(0, 10, 0, 10));
 
     	VBox summaryContent = new VBox();
     	VBox.setMargin(summaryContent, new Insets(20, 20, 20, 20));
     	Label personRecordsLabel = new Label("*** You set 1 personal record! Squats: 245lbs ***"); // some logic elsewhere, pass in a string variable
-    	Label totalWeightLiftedLabel = new Label("Total weight lifted: ");
+    	Label totalWeightLiftedLabel = new Label("Total weight lifted: " + workout.getTotalWeightLifted() + "lbs");
     	ArrayList<Label> bestSetsLabels = new ArrayList<Label>();
     	
     	// for loop here, arrayList of best sets, create arrayList of labels and addAll to the VBox

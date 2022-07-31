@@ -25,6 +25,7 @@ public class Workout {
 		} else {
 			this.allExercises.put(exerciseNumber, exercisesDone);
 		}
+		System.out.println(allExercises);
 	}
 		
 	public HashMap<Integer, ArrayList<StrengthExercise>> getAllExercises() {
@@ -103,6 +104,8 @@ public class Workout {
 							+ "\n";
 				}
 			});
+		} else {
+			str += "empty"; // remove later, for debugging
 		}
 		return str;
 	}
