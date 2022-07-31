@@ -25,7 +25,7 @@ public class Main extends Application {
 			
 			Scene scene = new Scene(root,400,400);
 			primaryStage.setScene(scene);
-			primaryStage.setTitle("Workout App");
+			primaryStage.setTitle("Workout Application");
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
