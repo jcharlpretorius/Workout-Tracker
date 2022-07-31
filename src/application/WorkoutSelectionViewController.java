@@ -154,7 +154,7 @@ public class WorkoutSelectionViewController {
     	// create StrengthExercise objects from text field inputs and add them to the ArrayList of all exercises 
     	for (int i = 0; i < repsTextFields.size(); i++) {
     		int reps = Integer.parseInt(repsTextFields.get(i).getText());
-    		double weight = Double.parseDouble(weightTextFields.get(i).getText());
+    		int weight = Integer.parseInt(weightTextFields.get(i).getText());
     		StrengthExercise se = new StrengthExercise(exercise.getExerciseName(), reps, weight);
     		exercisesDone.add(se);
     	}
@@ -165,7 +165,7 @@ public class WorkoutSelectionViewController {
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
-    	void finishWorkout() {
+    void finishWorkout() {
     	// change the scene to the workout Summary 
     	// make sure to validate input here as well. all exercises should have a valid number entered in the sets textField
     	// and the Workout class should have its allExercises HashMap populated for that exercise number
