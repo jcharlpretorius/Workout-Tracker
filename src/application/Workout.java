@@ -9,24 +9,8 @@ public class Workout {
 	public Workout() {
 		this.allExercises = new HashMap<Integer, ArrayList<StrengthExercise>>();
 	}
-//	private String exerciseName;
-	//	private Scene
-	
-//	public void initializeAllExercises(int numberOfExercises) {
-//		System.out.println(numberOfExercises);
-//		this.allExercises = new ArrayList<ArrayList<StrengthExercise>>(numberOfExercises);
-//		System.out.println(this.allExercises.size());
-//	}
-//	
-//	public void setAllExercises(int exerciseNumber, ArrayList<StrengthExercise> exercisesDone) {
-//		// add ArrayList of StrengthExercises (represents sets) to the nested ArrayList
-//		this.allExercises.add(exerciseNumber, exercisesDone);
-//	}
-//	
-//	public ArrayList<ArrayList<StrengthExercise>> getAllExercises() {
-//		// I don't know if this should be changed to prevent privacy leak..
-//		return this.allExercises;
-//	}
+
+
 	public void setAllExercises(int exerciseNumber, ArrayList<StrengthExercise> exercisesDone) {
 		// add ArrayList of StrengthExercises (represents sets) to the HashMap
 		
