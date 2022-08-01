@@ -20,7 +20,6 @@ public class Main extends Application {
 			
 			// use FXMLLoader to get the controller and 'give' the primaryStage to the controller
 			WorkoutSelectionViewController selectionController = (WorkoutSelectionViewController)loader.getController();
-//			controller.applicationStage = primaryStage;
 			selectionController.setApplicationStage(primaryStage);
 			
 			Scene scene = new Scene(root,400,400);

@@ -8,10 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -24,10 +22,7 @@ import javafx.stage.Stage;
 public class WorkoutSelectionViewController {
 	private Stage applicationStage;
 	private Workout workout = new Workout();
-//	private Parent root;
-//	private Scene workoutSelectionScene = applicationStage.getScene();
 
-	//	ArrayList<StrengthExercise> allExercises = new ArrayList<StrengthExercise>();
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
     
@@ -35,22 +30,31 @@ public class WorkoutSelectionViewController {
     private ChoiceBox<StrengthExercise> exerciseChoices = new ChoiceBox<StrengthExercise>();
     
     @FXML
+    /**
+     * Switch the scene back to the workout selection scene
+     * @param workoutSelectionScene a scene that holds the previous scene 
+     * (the workout selection scene) so that the scene can be switched back to that scene
+     */
     private void exitWorkout(Scene workoutSelectionScene) {
     	// change scene back to work out selection scene
-    	
     	applicationStage.setScene(workoutSelectionScene);
     }
 
     @FXML
+   /**
+    * Creates a scene based on the number of exercises selected in the workout selection scene
+    * to get the types of exercises and number of sets the user wants to perform
+    * @param event on action of "Select Exercises" button press in the workout selection scene
+    */
     void getExercises(ActionEvent event) {
     	Scene workoutSelection = applicationStage.getScene();
     	VBox contents = new VBox();
     	contents.setPadding(new Insets(20, 20, 20, 20));
-    	ArrayList<String> chosenExercises = new ArrayList<String>(); // unused..
+//    	ArrayList<String> chosenExercises = new ArrayList<String>(); // unused ArrayList
     	ArrayList<TextField> setsTextFields = new ArrayList<TextField>();
     	
-    	// tabs in label should be removed once the layout is changed to look nice
-    	Label exerciseChoiceLabel = new Label("Exercise \t\t\t\t Number of Sets"); // use separate labels instead of tabs to adjust layout
+    	// Change this to use separate labels instead of tabs to adjust layout
+    	Label exerciseChoiceLabel = new Label("Exercise \t\t\t\t Number of Sets"); 
     	contents.getChildren().add(exerciseChoiceLabel);
     	
     	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
@@ -58,11 +62,13 @@ public class WorkoutSelectionViewController {
     	// initializes the size of the allExercises ArrayList
     	workout.setNumberOfExercises(numberOfExercises);
     	
+    	// A loop for creating elements of the scene for getting the exercise choices and number of sets desired
     	int rowCounter = 0;
     	while(rowCounter < numberOfExercises) {
     		HBox exerciseRow = new HBox();
     		exerciseRow.setPadding(new Insets(0, 0, 2, 0));
     		
+    		// Create ChoiceBoxes containing a list of exercise choices
     		ChoiceBox<String> choiceBoxOptions = new ChoiceBox<String>();
     		choiceBoxOptions.getItems().addAll(createExerciseArrayList());
     		choiceBoxOptions.getSelectionModel().select(0); // sets default value in choiceBox
@@ -70,12 +76,12 @@ public class WorkoutSelectionViewController {
     		TextField numberOfSetsTextfield = new TextField(); // should only take type int
     		numberOfSetsTextfield.setPrefWidth(80);
     		numberOfSetsTextfield.setAlignment(Pos.CENTER);
-    		setsTextFields.add(numberOfSetsTextfield); // unused arrayList
+    		setsTextFields.add(numberOfSetsTextfield); 
     		
     		Button startExercise = new Button("Start Exercise");
 	
     		// need to validate the input of the textfields so that they only allow integers and choicebox is not empty
-    		// probably pull the input validation into a class like the "Grade" class in the gradeCalculator
+    		// probably pull the input validation into another class or method 
     		int exerciseNumber = rowCounter + 1;
     		startExercise.setOnAction(startExerciseEvent -> {
     			int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText());    			
@@ -90,11 +96,11 @@ public class WorkoutSelectionViewController {
     	
     	HBox buttonBox = new HBox();
     	
-    	// do calculations and go to summary window
+    	// Button calls finishWorkout function to do calculations and switch to workout summary window
     	Button finishWorkoutButton = new Button("Finish Workout");
     	finishWorkoutButton.setOnAction(doneEvent -> finishWorkout());
     	
-    	// go back to the workout selection window. If this breaks things it could be removed later
+    	// Button to switch back to the workout selection window. 
     	Button exitWorkout = new Button("Exit Workout");
     	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
     	buttonBox.getChildren().addAll(exitWorkout, finishWorkoutButton);
@@ -106,11 +112,16 @@ public class WorkoutSelectionViewController {
     	
     }
     
+    /**
+     * Creates and switches to a Scene to get the user's input for the number of repetitions
+     * and weight lifted for each set based on the type of exercise and number of sets the
+     * user enters 
+     * 
+     * @param exerciseSelectionScene the Scene that will be switched back to, passed as an argument to storeSets()
+     * @param exercise An ExerciseSet object that holds the values of the number of sets and the exercise name, passed 
+     * as an argument to storeSets()
+     */
     void getRepsAndWeight(Scene exerciseSelectionScene, ExerciseSets exercise) {
-    	// get the number of repetitions and weight lifted for each set of a particular exercise
-    	// add this data into an arrayList of Strength exercises, maybe use hashmap with key being exercise name?
-    	// if there is enough code duplication then maybe pull set creation into another method?   
-    	// add label with the name of the exercises, ie "Squats"
     	VBox allRows = new VBox();
 //    	Inset labelMargins = new Insets(20, 20, 20, 20)); // if insets are reused the could be made variables
     	// values refer to: (top, right, bottom, left)
@@ -153,21 +164,29 @@ public class WorkoutSelectionViewController {
     	Button doneButton = new Button("Done");
 
     	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields));
-    	// need some kind of method for switching back to the exerciseSelection scene
     	allRows.getChildren().add(doneButton);
     	
     	Scene repsAndWeights = new Scene(allRows);
     	applicationStage.setScene(repsAndWeights);
-    	 
     }
     
+    /**
+     * Stores the information about the repetitions and weights lifted for each set of the 
+     * exercise, then adds that to the data for the entire workout.
+     * Then it switches back to the exercise selection scene
+     * 
+     * @param exerciseSelectionScene the Scene that will be switched back to
+     * @param exercise An ExerciseSet object that holds the values of the number of sets and the exercise name
+     * @param repsTextFields An ArrayList of TextFields that contains user input integers for the number of repetitions
+     * @param weightTextFields An ArrayList of TextFields that contains user input integers for the weight lifted in lbs
+     */
     void storeSets(Scene exerciseSelectionScene, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
     	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
-    	// change name depending on what this does.
-    	// create exercise objects
+   
     	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
     
-    	// create StrengthExercise objects from text field inputs and add them to the ArrayList of all exercises 
+    	// create StrengthExercise objects from ArrayLists of TextField inputs and add them to the ArrayList of all exercises 
+    	// need to implement input validation on the text fields 
     	for (int i = 0; i < repsTextFields.size(); i++) {
     		int reps = Integer.parseInt(repsTextFields.get(i).getText());
     		int weight = Integer.parseInt(weightTextFields.get(i).getText());
@@ -175,18 +194,22 @@ public class WorkoutSelectionViewController {
     		exercisesDone.add(se);
     	}
     	
+    	// Add the Arraylist of exercises to ArrayList for all the exercises done in the workout
     	workout.setAllExercises(exercise.getExerciseNumber(), exercisesDone);
-    	// if no errors after input validation...
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
-    
+    /**
+     * Creates and switch to a scene for the workout summary and displays important information about workout
+     * including the total weight lifted, the number of personal records beaten (if any) and 
+     * the bests sets done for each exercise
+     */
     void finishWorkout() {
-    	// Create and change the scene to the workout Summary 
     	
-    	// calculate value in workout object
+    	// calculate values in workout object to be displayed
     	workout.setTotalWeightLifted(); 
     	workout.setBestSets();
+    	
     	// create workout summary scene:
     	VBox summary = new VBox();
     	summary.setSpacing(10);
@@ -194,7 +217,7 @@ public class WorkoutSelectionViewController {
     	Label summaryTitleLabel = new Label("Workout Summary");
 		summaryTitleLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
 
-		// this label could instead be something like: "You completed your 4th workout!" - would need workout history file
+		// this label could instead be something like: "You completed your nth workout!" - would need workout history file
     	Label congratsLabel = new Label("Congrats, you finished your workout!");
 		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 16));
 		VBox.setMargin(congratsLabel, new Insets(0, 10, 0, 10));
@@ -207,6 +230,7 @@ public class WorkoutSelectionViewController {
     	bestSetsHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
     	summaryContent.getChildren().addAll(totalWeightLiftedLabel, personRecordsLabel, bestSetsHeaderLabel);
     	
+    	// Create labels for best sets
     	ArrayList<Label> bestSetsLabels = new ArrayList<Label>();
     	workout.getBestSets().forEach((exName, strengthExercise) -> {
     		bestSetsLabels.add(new Label(exName + ": " + strengthExercise.getReps() + "x" + strengthExercise.getWeight()+ "lbs"));
@@ -214,16 +238,21 @@ public class WorkoutSelectionViewController {
     	for (Label bestSet : bestSetsLabels) {
         	summaryContent.getChildren().add(bestSet);
     	}
-//    	 maybe add a button here too?
+  
     	summary.getChildren().addAll(summaryTitleLabel, congratsLabel, summaryContent);
+    	
+    	// Switch to the workout summary scene
     	Scene workoutSummary = new Scene(summary);
     	applicationStage.setScene(workoutSummary);
     }
     
-   
+   /**
+    * Returns a list of exercise choices
+    * @return
+    */
     public ObservableList<String> createExerciseArrayList() {
-    	// temporary solution for populating exercise choices - used in choicebox
-    	// pull this out to a method or class later.. probably Workout
+    	// temporary solution for populating exercise ChoiceBoxes 
+    	// pull this out to a method or class later. Or read from a file.
 
     	ArrayList<String> exercises = new ArrayList<String>();
     	exercises.add("Squat");
@@ -239,24 +268,10 @@ public class WorkoutSelectionViewController {
     	ObservableList<String> exercisesList = FXCollections.observableArrayList(exercises);
     	
     	return exercisesList;
-   
-    	
-//    	ArrayList<StrengthExercise> listOfExercises = new ArrayList<StrengthExercise>();
-//    	for (int i = 0; i < exercises.size(); i++) {
-//    		// create new strength exercise and add it to the arrayList
-//    		listOfExercises.add(new StrengthExercise(exercises.get(i)));
-//    	}
-////    	System.out.println(listOfExercises);
-//    	return listOfExercises;
     }
     
   
     public void setApplicationStage(Stage stage) {
     	this.applicationStage = stage;
     }
-    
-    public Stage getApplicationStage() {
-    	return this.applicationStage;
-    }
-   
 }
