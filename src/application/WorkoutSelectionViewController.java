@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class WorkoutSelectionViewController {
@@ -44,37 +45,41 @@ public class WorkoutSelectionViewController {
     void getExercises(ActionEvent event) {
     	Scene workoutSelection = applicationStage.getScene();
     	VBox contents = new VBox();
-
-    	ArrayList<String> chosenExercises = new ArrayList<String>();
+    	contents.setPadding(new Insets(20, 20, 20, 20));
+    	ArrayList<String> chosenExercises = new ArrayList<String>(); // unused..
     	ArrayList<TextField> setsTextFields = new ArrayList<TextField>();
     	
     	// tabs in label should be removed once the layout is changed to look nice
-    	Label exerciseChoiceLabel = new Label("Exercise \t Number of Sets \t"); 
+    	Label exerciseChoiceLabel = new Label("Exercise \t\t\t\t Number of Sets"); // use separate labels instead of tabs to adjust layout
     	contents.getChildren().add(exerciseChoiceLabel);
     	
     	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
     	
+    	// initializes the size of the allExercises ArrayList
+    	workout.setNumberOfExercises(numberOfExercises);
+    	
     	int rowCounter = 0;
     	while(rowCounter < numberOfExercises) {
     		HBox exerciseRow = new HBox();
+    		exerciseRow.setPadding(new Insets(0, 0, 2, 0));
     		
     		ChoiceBox<String> choiceBoxOptions = new ChoiceBox<String>();
     		choiceBoxOptions.getItems().addAll(createExerciseArrayList());
     		choiceBoxOptions.getSelectionModel().select(0); // sets default value in choiceBox
-
+    		
     		TextField numberOfSetsTextfield = new TextField(); // should only take type int
-    		setsTextFields.add(numberOfSetsTextfield); // unused arrayList, maybe needed for summary?
+    		numberOfSetsTextfield.setPrefWidth(80);
+    		numberOfSetsTextfield.setAlignment(Pos.CENTER);
+    		setsTextFields.add(numberOfSetsTextfield); // unused arrayList
     		
     		Button startExercise = new Button("Start Exercise");
-    		
-    		
-    		
-    		// need to validate the input of the textfields so that they only allow integers
+	
+    		// need to validate the input of the textfields so that they only allow integers and choicebox is not empty
     		// probably pull the input validation into a class like the "Grade" class in the gradeCalculator
     		int exerciseNumber = rowCounter + 1;
     		startExercise.setOnAction(startExerciseEvent -> {
-    			ExerciseSets exercise = new ExerciseSets(choiceBoxOptions.getValue(), Integer.parseInt(numberOfSetsTextfield.getText()), exerciseNumber);
     			int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText());    			
+    			ExerciseSets exercise = new ExerciseSets(choiceBoxOptions.getValue(), numberOfSets, exerciseNumber);
     			getRepsAndWeight(applicationStage.getScene(), exercise);
     		});
     		
@@ -107,8 +112,14 @@ public class WorkoutSelectionViewController {
     	// if there is enough code duplication then maybe pull set creation into another method?   
     	// add label with the name of the exercises, ie "Squats"
     	VBox allRows = new VBox();
-    	Label repsAndWeightHeaderLabel = new Label("Sets \t\t\t\t\t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
-    	allRows.getChildren().add(repsAndWeightHeaderLabel);
+//    	Inset labelMargins = new Insets(20, 20, 20, 20)); // if insets are reused the could be made variables
+    	// values refer to: (top, right, bottom, left)
+    	allRows.setPadding(new Insets(20, 20, 20, 20));
+    	Label exerciseNameLabel = new Label(exercise.getExerciseName());
+    	VBox.setMargin(exerciseNameLabel, new Insets(0, 0, 20, 0));
+    	exerciseNameLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 24));
+    	Label repsAndWeightHeaderLabel = new Label("\t\tSets \t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
+    	allRows.getChildren().addAll(exerciseNameLabel, repsAndWeightHeaderLabel);
     	ArrayList<TextField> repsTextFields = new ArrayList<TextField>();
     	ArrayList<TextField> weightTextFields = new ArrayList<TextField>();
 
@@ -116,16 +127,21 @@ public class WorkoutSelectionViewController {
     	while(rowCounter < exercise.getNumberOfSets()) {
     		HBox setsRow = new HBox();
     		setsRow.setSpacing(10.0);
+    		HBox.setMargin(setsRow, new Insets(10, 10, 5, 10));
     		
-    		Label setLabel = new Label("Set " + (rowCounter + 1));
+    		Label setLabel = new Label("Set " + (rowCounter + 1)); // how to prevent row from shifting to the right when set# is > 1 digit?
     		TextField reps = new TextField();
-    		reps.setPromptText("Reps"); // these prompt text might be uneccessary
+    		reps.setPrefWidth(40);
+    		reps.setPromptText("Reps");
+    		reps.setAlignment(Pos.CENTER);
     		repsTextFields.add(reps);
     		Label xLabel = new Label("X");
     		// how to set font style: https://coderslegacy.com/java/javafx-font/
     		xLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 20));
     		TextField weight = new TextField();
+    		weight.setPrefWidth(90);
     		weight.setPromptText("Weight (lbs)");
+    		weight.setAlignment(Pos.CENTER);
     		weightTextFields.add(weight);
     	
     		setsRow.getChildren().addAll(setLabel, reps, xLabel, weight);
@@ -160,52 +176,41 @@ public class WorkoutSelectionViewController {
     	}
     	
     	workout.setAllExercises(exercise.getExerciseNumber(), exercisesDone);
-    	System.out.println(workout.toString());
-
-
     	// if no errors after input validation...
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
     
     void finishWorkout() {
-    	// change the scene to the workout Summary 
-    	// make sure to validate input here as well. all exercises should have a valid number entered in the sets textField
-    	// and the Workout class should have its allExercises HashMap populated for that exercise number
+    	// Create and change the scene to the workout Summary 
     	
     	// calculate value in workout object
-//    	workout.setTotalWeightLifted(); // Cannot invoke "java.util.ArrayList.iterator()" because the return value of "java.util.HashMap.get(Object)" is null
-//    	workout.setBestSets();
-    	System.out.println("print test");
-    	System.out.println(workout.toString()); // why doesn't this print anything? the method calls don't work either
-    	// not even the toString works, should print "empty" atleast...
-    	
-    	
-    	
-    	
+    	workout.setTotalWeightLifted(); 
+    	workout.setBestSets();
     	// create workout summary scene:
-    		// most values are placeholders
     	VBox summary = new VBox();
     	summary.setSpacing(10);
     	summary.setAlignment(Pos.CENTER); 
     	Label summaryTitleLabel = new Label("Workout Summary");
-		summaryTitleLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 32));
+		summaryTitleLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
 
+		// this label could instead be something like: "You completed your 4th workout!" - would need workout history file
     	Label congratsLabel = new Label("Congrats, you finished your workout!");
-		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 18));
+		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 16));
 		VBox.setMargin(congratsLabel, new Insets(0, 10, 0, 10));
 
     	VBox summaryContent = new VBox();
     	VBox.setMargin(summaryContent, new Insets(20, 20, 20, 20));
-    	Label personRecordsLabel = new Label("*** You set 1 personal record! Squats: 245lbs ***"); // some logic elsewhere, pass in a string variable
+    	Label personRecordsLabel = new Label("***<Placeholder> You set 1 personal record! Squats: 245lbs ***"); // some logic elsewhere, pass in a string variable
     	Label totalWeightLiftedLabel = new Label("Total weight lifted: " + workout.getTotalWeightLifted() + "lbs");
-    	ArrayList<Label> bestSetsLabels = new ArrayList<Label>();
+    	Label bestSetsHeaderLabel = new Label("Best sets: ");
+    	bestSetsHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+    	summaryContent.getChildren().addAll(totalWeightLiftedLabel, personRecordsLabel, bestSetsHeaderLabel);
     	
-    	// for loop here, arrayList of best sets, create arrayList of labels and addAll to the VBox
-    	summaryContent.getChildren().addAll(personRecordsLabel, totalWeightLiftedLabel);
-    	bestSetsLabels.add(new Label("Squats: 2 x 245lbs"));
-    	bestSetsLabels.add(new Label("Overhead Press: 4 x 120lbs"));
-    	bestSetsLabels.add(new Label("Barbell Rows: 3 x 185lbs"));
+    	ArrayList<Label> bestSetsLabels = new ArrayList<Label>();
+    	workout.getBestSets().forEach((exName, strengthExercise) -> {
+    		bestSetsLabels.add(new Label(exName + ": " + strengthExercise.getReps() + "x" + strengthExercise.getWeight()+ "lbs"));
+    	});
     	for (Label bestSet : bestSetsLabels) {
         	summaryContent.getChildren().add(bestSet);
     	}
