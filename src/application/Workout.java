@@ -67,24 +67,44 @@ public class Workout {
 	public void setBestSets() {
 		// loop through the HashMap and find the set with the heavies weight lifted
 		HashMap<String, StrengthExercise> allBestSets = new HashMap<String, StrengthExercise>();
-		if (!allExercises.isEmpty()) {
+		if (!this.allExercises.isEmpty()) {
+			// If bestSets is null, add the first set of the first exercise
+//			if (this.bestSets == null) {
+//				this.bestSets.put(allExercises.get(0).get(0).getName(), allExercises.get(0).get(0));
+//			} 
 			for (int i = 0; i < allExercises.size(); i++) {
 				String exerciseName = allExercises.get(i).get(0).getName();
-				int heaviestWeight = 0;
-				StrengthExercise bestSet = new StrengthExercise();
-				if (!(bestSets.containsKey(exerciseName))) {
-					heaviestWeight = allExercises.get(i).get(0).getWeight();
-					bestSet = maxWeight(bestSet, heaviestWeight, i);
-					allBestSets.put(exerciseName, bestSet);
-				} else {
-					heaviestWeight = allBestSets.get(exerciseName).getWeight();
-					bestSet = maxWeight(bestSet, heaviestWeight, i);
-					allBestSets.replace(exerciseName, bestSet);
-				}
+//				StrengthExercise bestSet = new StrengthExercise();
+				// set best set to the first set of the exercise at index i
 				
-				for (StrengthExercise ex : allExercises.get(i)) {
-					ex.getWeight();
-				}
+					if (allBestSets.containsKey(exerciseName)) {
+						StrengthExercise heaviestSet = allBestSets.get(exerciseName);
+						heaviestSet = getHeaviestSet(heaviestSet, i);
+						allBestSets.replace(exerciseName, heaviestSet);
+					} else {
+						StrengthExercise heaviestSet = allExercises.get(i).get(0);
+						heaviestSet = getHeaviestSet(heaviestSet, i);
+						allBestSets.put(exerciseName, heaviestSet);
+					}
+				
+//					if (!(allBestSets.containsKey(exerciseName))) {
+//						// set the heaviest weight to the weight of the first set
+//						heaviestWeight = allExercises.get(i).get(0).getWeight();
+//						bestSet = getHeaviestSet(bestSet, heaviestWeight, i);
+//						allBestSets.put(exerciseName, bestSet);
+//						System.out.println("put set in bestSets, doesn't contain key");
+//					} else {
+//						heaviestWeight = allBestSets.get(exerciseName).getWeight();
+//						bestSet = getHeaviestSet(bestSet, heaviestWeight, i);
+//						allBestSets.replace(exerciseName, bestSet);
+//						System.out.println("put set in bestSets, contains key");
+//
+//					}
+
+				// what is this used for?
+//				for (StrengthExercise ex : allExercises.get(i)) {
+//					ex.getWeight();
+//				}
 			}
 		}
 		this.bestSets = allBestSets;
@@ -93,12 +113,16 @@ public class Workout {
 	public HashMap<String, StrengthExercise> getBestSets() {
 		return this.bestSets;
 	}
-	public StrengthExercise maxWeight(StrengthExercise bestSet, int heaviestWeight, int index) {
+	public StrengthExercise getHeaviestSet(StrengthExercise bestSet, int index) {
 		// loop through ArrayList of StrengthExercise objects and return the object with the largest weight value 
+		int heaviestWeight = bestSet.getWeight();
 		for (int j = 1; j < allExercises.get(index).size(); j++) {
 			StrengthExercise ex = allExercises.get(index).get(j); 
 			if (ex.getWeight() > heaviestWeight) {
 				heaviestWeight = ex.getWeight();
+				bestSet = ex;
+			} else if ((ex.getWeight() == heaviestWeight) && (ex.getReps() > bestSet.getReps())) {
+				// if weight is equal take the set with more repetitions
 				bestSet = ex;
 			}
 		}
@@ -106,7 +130,6 @@ public class Workout {
 	}
 	
 	public String toString() {
-		// make sure allExercises is not null
 		String output = "";
 		if (!this.allExercises.isEmpty()) {
 			for (int i = 0; i < this.allExercises.size(); i++) {
@@ -114,6 +137,7 @@ public class Workout {
 				for (int j = 0; j < this.allExercises.get(i).size(); j++) {
 					str += "Exercise number: " + i + ", " + this.allExercises.get(i).get(j).toString() + "\n";
 				}
+				output += str;
 			}
 		} 
 		return output;
