@@ -167,6 +167,13 @@ public class WorkoutSelectionViewController {
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
+    @FXML
+    void calculateBMI(ActionEvent event) {
+    	System.out.println("Scene Change to BMI CALCULATOR");
+    	
+    	Scene calculateBMI = new Scene(new Label("Placeholder."));
+    	applicationStage.setScene(calculateBMI);
+    }
     
     void finishWorkout() {
     	// change the scene to the workout Summary 
