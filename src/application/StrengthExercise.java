@@ -1,7 +1,7 @@
 package application;
 
 public class StrengthExercise {
-	// parent class for strength exercises
+
 	private int weight;
 	private int repetitions;
 	private String exerciseName;
@@ -31,10 +31,7 @@ public class StrengthExercise {
 		return this.weight;
 	}
 	public String toString() {
-		return this.exerciseName + "; reps: " + this.repetitions + ", weight: " + this.weight;
+		return "(" + this.exerciseName + ": reps: " + this.repetitions + ", weight: " + this.weight + ")";
 	}
 	
-//	public String toString() {
-//		return this.exerciseName;
-//	}
 }
