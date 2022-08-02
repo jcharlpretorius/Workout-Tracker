@@ -171,7 +171,18 @@ public class WorkoutSelectionViewController {
     void calculateBMI(ActionEvent event) {
     	System.out.println("Scene Change to BMI CALCULATOR");
     	
-    	Scene calculateBMI = new Scene(new Label("Placeholder for BMI Calculator"));
+    	HBox bmiContainer = new HBox();
+    	Label weightLabel = new Label("Enter your body weight");
+    	TextField weightTextField = new TextField();
+    	Label heightlabel = new Label("Enter your height");
+    	TextField heightTextField = new TextField();
+    	
+    	Button calcualteBMIButton = new Button("Calculate BMI!");
+    	calcualteBMIButton.setOnAction(doneEvent -> System.out.println("calculate button pressed"));
+    	
+    	bmiContainer.getChildren().addAll(weightLabel,weightTextField,heightlabel,heightTextField,calcualteBMIButton);
+    	
+    	Scene calculateBMI = new Scene(bmiContainer);
     	applicationStage.setScene(calculateBMI);
     }
     
