@@ -171,7 +171,7 @@ public class WorkoutSelectionViewController {
     void calculateBMI(ActionEvent event) {
     	System.out.println("Scene Change to BMI CALCULATOR");
     	
-    	Scene calculateBMI = new Scene(new Label("Placeholder."));
+    	Scene calculateBMI = new Scene(new Label("Placeholder for BMI Calculator"));
     	applicationStage.setScene(calculateBMI);
     }
     
