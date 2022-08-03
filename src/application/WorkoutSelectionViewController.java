@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 public class WorkoutSelectionViewController {
 	private Stage applicationStage;
 	private Workout workout = new Workout();
+	private UserInfo user = new UserInfo(); // need to create an instance of this at the beginning, but populate it from file, use try-catch?
 
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
@@ -70,7 +71,8 @@ public class WorkoutSelectionViewController {
     		
     		// Create ChoiceBoxes containing a list of exercise choices
     		ChoiceBox<String> choiceBoxOptions = new ChoiceBox<String>();
-    		choiceBoxOptions.getItems().addAll(createExerciseArrayList());
+    		ObservableList<String> exerciseChoices = FXCollections.observableArrayList(user.createExerciseArrayList());
+    		choiceBoxOptions.getItems().addAll(exerciseChoices);
     		choiceBoxOptions.getSelectionModel().select(0); // sets default value in choiceBox
     		
     		TextField numberOfSetsTextfield = new TextField(); // should only take type int
@@ -250,25 +252,24 @@ public class WorkoutSelectionViewController {
     * Returns a list of exercise choices
     * @return
     */
-    public ObservableList<String> createExerciseArrayList() {
-    	// temporary solution for populating exercise ChoiceBoxes 
-    	// pull this out to a method or class later. Or read from a file.
-
-    	ArrayList<String> exercises = new ArrayList<String>();
-    	exercises.add("Squat");
-    	exercises.add("Bench Press");
-    	exercises.add("Dead Lift");
-    	exercises.add("Overhead Press");
-    	exercises.add("Barbell Row");
-    	exercises.add("Bicep Curl");
-    	exercises.add("Tricep Push-downs");
-    	exercises.add("Lateral Raises");
-    	exercises.add("Pull ups");
-    	exercises.add("Dips");
-    	ObservableList<String> exercisesList = FXCollections.observableArrayList(exercises);
-    	
-    	return exercisesList;
-    }
+//    public static ArrayList<String> createExerciseArrayList() {
+//    	// temporary solution for populating exercise ChoiceBoxes 
+//    	// pull this out to a method or class later. Or read from a file.
+//
+//    	ArrayList<String> exercises = new ArrayList<String>();
+//    	exercises.add("Squat");
+//    	exercises.add("Bench Press");
+//    	exercises.add("Dead Lift");
+//    	exercises.add("Overhead Press");
+//    	exercises.add("Barbell Row");
+//    	exercises.add("Bicep Curl");
+//    	exercises.add("Tricep Push-downs");
+//    	exercises.add("Lateral Raises");
+//    	exercises.add("Pull ups");
+//    	exercises.add("Dips");
+//    	
+//    	return exercises;
+//    }
     
   
     public void setApplicationStage(Stage stage) {
