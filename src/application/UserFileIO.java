@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,12 +71,39 @@ public class UserFileIO { // maybe name this class to something more descriptive
 		
 		return userInfoArray;
 	}
-	//
-	public static void writeWorkout(String fileName) throws IOException {
-		// write the user's workout data to a file. Currently it writes over the file ever time
+	/**
+	 * Write the user's workout data to a file. Writes over the existing file 
+	 * @param fileName
+	 * @throws IOException
+	 */
+	public void writeWorkout(String fileName) throws IOException {
+		// 
+		int endOfFileIndex = recordsStartIndex + user.getExerciseArrayList().size();
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 		PrintWriter pWriter = new PrintWriter(writer);
-		// should access the same index variables as parseUserInfoArray. Maybe store them somewhere. Instance variables?
+		for (int i = 0; i < endOfFileIndex; i++) {
+			//pWriter.println();
+			// maybe make this a while loop, then set condition to false if reach the end of the personal records HashMap?
+			String line = "";
+			if (i == nameIndex) {
+				pWriter.println(user.getUserName());
+			} else if (i == numWorkoutsIndex) {
+				pWriter.println(user.getNumWorkoutsDone());
+			} else if (i == userHeightIndex) {
+				pWriter.println(user.getHeight());
+			} else if (i == userWeightsIndex) {
+				pWriter.println(user.getBodyWeight());
+				user.setBodyWeight(Double.parseDouble(line));
+			} else if (i == dateIndex) {
+				pWriter.println(dateToString(user.getDate())); 
+			}else if (i >= recordsStartIndex) { // Make sure to check that your comparators are correct: 
+//				System.out.println(array.get(i));
+				// get and arrayList of string arrays and print them in a for loop
+//				pWriter.println(arr[0] + "," + arr[1]); // something like this
+		
+			} // there shouldn't be anything after this
+		}
+	
 		pWriter.close();
 	}
 	
@@ -100,10 +128,8 @@ public class UserFileIO { // maybe name this class to something more descriptive
 			} else if (i == userWeightsIndex) {
 				user.setBodyWeight(Double.parseDouble(line));
 			} else if (i == dateIndex) {
-				// how to parse string date to Date object? see simpleDateFormat. create methods to convert string to date and the other way around (for writer)
-//				Date date = new DateFormat.parse(line);
-//				user.setDate(Date(line));			
-			}else if (i >= recordsStartIndex && i < recordsEndIndex) { // Make sure to check that your comparators are correct: 
+				user.setDate(stringToDate(line));
+			}else if (i >= recordsStartIndex && i < recordsEndIndex) { // Make sure to check that your comparators are correct.Could remove the second conditional 
 //				System.out.println(array.get(i));
 				// split line into two strings containing exercise name and pr weight and add to array
 				String[] pr = array.get(i).split(",");  
@@ -124,6 +150,38 @@ public class UserFileIO { // maybe name this class to something more descriptive
 		}
 		return personalRecords;
 	}
+	
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public String dateToString(Date date) {
+		// Converts a given Date object to a string. 
+		//Set the date format to day-month-year
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		return simpleDateFormat.format(date);
+	}
+	
+	/**
+	 * Converts a given string in the specified format into a Date object
+	 * @param dateString a string representing a date, in the format "dd-MM-yyyy"
+	 * @return a Date object
+	 */
+	public Date stringToDate(String dateString) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		Date date = new Date();
+		try {
+			date = simpleDateFormat.parse(dateString);
+		} catch (ParseException e) {
+			System.out.println("Error: date String could not be parsed by SimpleDateFormat.");
+			e.printStackTrace();
+		}
+		return date;
+	}
+	// need to pass the best Sets hashmap to this class so I can compare the values to the current pr'r
+	// maybe UserInfo extends UserFileIO? then userInfo will get all the methods/instance variables this class has
+	// you could construct a new userInfo object by passing in the fileName/path string and use the parent class's constructor
 	
 	
 	

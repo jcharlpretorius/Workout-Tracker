@@ -131,7 +131,7 @@ public class WorkoutSelectionViewController {
     	Label exerciseNameLabel = new Label(exercise.getExerciseName());
     	VBox.setMargin(exerciseNameLabel, new Insets(0, 0, 20, 0));
     	exerciseNameLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 24));
-    	Label repsAndWeightHeaderLabel = new Label("\t\tSets \t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
+    	Label repsAndWeightHeaderLabel = new Label("\t\tReps \t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
     	allRows.getChildren().addAll(exerciseNameLabel, repsAndWeightHeaderLabel);
     	ArrayList<TextField> repsTextFields = new ArrayList<TextField>();
     	ArrayList<TextField> weightTextFields = new ArrayList<TextField>();
