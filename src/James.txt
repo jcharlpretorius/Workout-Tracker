@@ -1,0 +1,9 @@
+James
+2
+170
+64
+05-02-2022
+Squat,245
+Dead Lift,333
+Bench Press,200
+pullups,0

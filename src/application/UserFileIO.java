@@ -85,13 +85,10 @@ public class UserFileIO { // maybe name this class to something more descriptive
 	 */
 	public void writeWorkout(String fileName) throws IOException {
 		// 
-		int endOfFileIndex = recordsStartIndex + user.getExerciseArrayList().size();
+		int endOfFileIndex = recordsStartIndex + user.getExerciseArrayList().size(); // not sure if this works yet..
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 		PrintWriter pWriter = new PrintWriter(writer);
 		for (int i = 0; i < endOfFileIndex; i++) {
-			//pWriter.println();
-			// maybe make this a while loop, then set condition to false if reach the end of the personal records HashMap?
-			String line = "";
 			if (i == nameIndex) {
 				pWriter.println(user.getUserName());
 			} else if (i == numWorkoutsIndex) {
@@ -100,17 +97,17 @@ public class UserFileIO { // maybe name this class to something more descriptive
 				pWriter.println(user.getHeight());
 			} else if (i == userWeightsIndex) {
 				pWriter.println(user.getBodyWeight());
-				user.setBodyWeight(Double.parseDouble(line));
 			} else if (i == dateIndex) {
 				pWriter.println(dateToString(user.getDate())); 
 			}else if (i >= recordsStartIndex) { // Make sure to check that your comparators are correct: 
-//				System.out.println(array.get(i));
-				// get and arrayList of string arrays and print them in a for loop
-//				pWriter.println(arr[0] + "," + arr[1]); // something like this
-		
+				// loop through personalRecords HashMap and write to file as CSV
+				user.getPersonalRecords().forEach((exerciseName, weight) -> {
+					pWriter.println(exerciseName + "," + weight);
+				});
+				break;
 			} // there shouldn't be anything after this
 		}
-	
+
 		pWriter.close();
 	}
 	
@@ -120,31 +117,38 @@ public class UserFileIO { // maybe name this class to something more descriptive
 		ArrayList<String> exerciseChoicesList = user.getExerciseArrayList(); 
 		ArrayList<String[]> personalRecordsList = new ArrayList<String[]>();// do you need to set the size of the String array here?
 		// You can change these values depending on which line number the information is on in the text file,
-		
-		int recordsEndIndex = recordsStartIndex + exerciseChoicesList.size();
-		
-		for (int i = 0; i < array.size(); i++) {
-			String line = array.get(i);
+		try {
+			int recordsEndIndex = recordsStartIndex + exerciseChoicesList.size();
 			
-			if (i == nameIndex) {
-				user.setUserName(line);
-			} else if (i == numWorkoutsIndex) {
-				user.setNumWorkoutsDone(i);
-			} else if (i == userHeightIndex) {
-				user.setHeight(Double.parseDouble(line));
-			} else if (i == userWeightsIndex) {
-				user.setBodyWeight(Double.parseDouble(line));
-			} else if (i == dateIndex) {
-				user.setDate(stringToDate(line));
-			}else if (i >= recordsStartIndex && i < recordsEndIndex) { // Make sure to check that your comparators are correct. Can probably remove the second conditional 
-//				System.out.println(array.get(i));
-				// split line into two strings containing exercise name and pr weight and add to array
-				String[] pr = array.get(i).split(",");  
-				personalRecordsList.add(pr);
-			} // there shouldn't be anything after this
+			for (int i = 0; i < array.size(); i++) {
+				String line = array.get(i);
+				
+				if (i == nameIndex) {
+					user.setUserName(line);
+					
+				} else if (i == numWorkoutsIndex) {
+					user.setNumWorkoutsDone(Integer.parseInt(line) + 1);
+					
+				} else if (i == userHeightIndex) {
+					user.setHeight(Double.parseDouble(line));
+					
+				} else if (i == userWeightsIndex) {
+					user.setBodyWeight(Double.parseDouble(line));
+					
+				} else if (i == dateIndex) {
+					user.setDate(stringToDate(line));
+					
+				}else if (i >= recordsStartIndex && i < recordsEndIndex) { // Make sure to check that your comparators are correct. Can probably remove the second conditional 
+//					System.out.println(array.get(i));
+					// split line into two strings containing exercise name and pr weight and add to array
+					String[] pr = array.get(i).split(",");  
+					personalRecordsList.add(pr);
+				} // there shouldn't be anything after this
+			}
+			user.setPersonalRecords(parsePersonalRecords(personalRecordsList));
+		} catch (NumberFormatException nfe) {
+			throw new NumberFormatException("Error: Could not parse value from file."); // write proper error message
 		}
-//		parsePersonalRecords(personalRecordsList);
-		user.setPersonalRecords(parsePersonalRecords(personalRecordsList));
 	}
 	
 	/**

@@ -209,14 +209,10 @@ public class WorkoutSelectionViewController {
      * the bests sets done for each exercise
      */
     void finishWorkout() {
-    	
     	// calculate values in workout object to be displayed
     	workout.setTotalWeightLifted(); 
     	workout.setBestSets();
     	ArrayList<String> newPRs = workout.checkPersonalBests(user.getPersonalRecords()); 
-    	// call function to compare the best sets hashmap to the pr hashmap
-    	// getPersonalRecords - use for comparison and modify (note that this method passes a reference to the same hashmap in userInfo
-//    	 methods might have to be public? nah.
     	
     	// create workout summary scene:
     	VBox summary = new VBox();
@@ -226,15 +222,20 @@ public class WorkoutSelectionViewController {
 		summaryTitleLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
 
 		// this label could instead be something like: "You completed your nth workout!" - would need workout history file
-    	Label congratsLabel = new Label("You finished your " + user.getNumWorkoutsDone() + " workout!"); // Create a method in user info to format number suffix and return message.
+		int workoutNumber = user.getNumWorkoutsDone(); // append ordinal to the workout number later
+    	Label congratsLabel = new Label(user.getUserName() + ", you finished your " + workoutNumber + " workout!"); // Create a method in user info to format number suffix and return message.
 		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 16));
 		VBox.setMargin(congratsLabel, new Insets(0, 10, 0, 10));
-
+		
+		// Date label
+		HBox dateHBox = new HBox();
+//		Label dateLabel = new Label(user.getDate());
+		
     	VBox summaryContent = new VBox();
     	VBox.setMargin(summaryContent, new Insets(20, 20, 20, 20));
+    	
     	Label personRecordsLabel = new Label(""); 
     	if (!newPRs.isEmpty()) {
-    		// "***<Placeholder> You set 1 personal record! Squats: 245lbs ***"
     		if (newPRs.size() == 1) {
     			// different text for single new PR set
     			personRecordsLabel.setText("Congratulations! You set " + newPRs.size() + " new personal record!");
@@ -270,30 +271,22 @@ public class WorkoutSelectionViewController {
     	// Switch to the workout summary scene
     	Scene workoutSummary = new Scene(summary);
     	applicationStage.setScene(workoutSummary);
+    	System.out.println("Name: " + user.getUserName());
+    	System.out.println("Num workouts Done: " + user.getNumWorkoutsDone());
+    	System.out.println("User height: " + user.getHeight());
+    	System.out.println("User BodyWeight: " + user.getBodyWeight());
+    	System.out.println("Personal Records: " + user.getPersonalRecords());
+
+    	
+//    	 write user information to file
+    	try {
+			userFile.writeWorkout("src/JamesAfterWorkout.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error: Failed to write to file");
+			e.printStackTrace();
+		}
     }
-    
-   /**
-    * Returns a list of exercise choices
-    * @return
-    */
-//    public static ArrayList<String> createExerciseArrayList() {
-//    	// temporary solution for populating exercise ChoiceBoxes 
-//    	// pull this out to a method or class later. Or read from a file.
-//
-//    	ArrayList<String> exercises = new ArrayList<String>();
-//    	exercises.add("Squat");
-//    	exercises.add("Bench Press");
-//    	exercises.add("Dead Lift");
-//    	exercises.add("Overhead Press");
-//    	exercises.add("Barbell Row");
-//    	exercises.add("Bicep Curl");
-//    	exercises.add("Tricep Push-downs");
-//    	exercises.add("Lateral Raises");
-//    	exercises.add("Pull ups");
-//    	exercises.add("Dips");
-//    	
-//    	return exercises;
-//    }
     
     
     public void setApplicationStage(Stage stage) {
