@@ -17,14 +17,14 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 public class UserFileIO { // maybe name this class to something more descriptive
-	private UserInfo user;
+	private UserInfo user = new UserInfo(); // call default constructor in case file reading fails. ? i don't know what I'm doing anymore
 	private ArrayList<String> exerciseChoices;
 	// indexes representing line numbers (starting at line 0) for the format of the text file that stores user information
 	private int nameIndex = 0;
 	private int numWorkoutsIndex = 1; 
 	private int userHeightIndex = 2; 
-	private int userWeightsIndex = 3; // CSV bodyweights, should be a method somewhere that adds this
-	private int dateIndex = 4; // CSV dates, corresponding to bodyweight
+	private int userWeightsIndex = 3; // CSV bodyweights, should be a method somewhere that adds / updates this
+	private int dateIndex = 4; // CSV dates, corresponding to bodyweight for BMI calculation
 	private int recordsStartIndex = 5;	
 	
 	
@@ -33,13 +33,16 @@ public class UserFileIO { // maybe name this class to something more descriptive
 	public UserFileIO(String fileName)  {
 		// TODO Auto-generated constructor stub
 		// read a file and create a UserInfo object to store the data
+		// could create our own exception and throw it from here.
 		try {
 			parseUserInfoArray(readWorkout(fileName));
 		} catch(NumberFormatException nfe) {
-			// message
+			// message here??
+			System.out.println(nfe.getMessage());
 			nfe.printStackTrace();
 		}catch (FileNotFoundException fnfe) {
 			//
+			System.out.println("Error: file " + fileName + " could not be found.");
 			fnfe.printStackTrace();
 		}catch (IOException e) { 
 			e.printStackTrace();
@@ -48,6 +51,10 @@ public class UserFileIO { // maybe name this class to something more descriptive
 	
 	public void setUser(UserInfo user) {
 		this.user = user; 
+	}
+	
+	public UserInfo getUser() {
+		return this.user;
 	}
 	
 	/**
@@ -129,24 +136,34 @@ public class UserFileIO { // maybe name this class to something more descriptive
 				user.setBodyWeight(Double.parseDouble(line));
 			} else if (i == dateIndex) {
 				user.setDate(stringToDate(line));
-			}else if (i >= recordsStartIndex && i < recordsEndIndex) { // Make sure to check that your comparators are correct.Could remove the second conditional 
+			}else if (i >= recordsStartIndex && i < recordsEndIndex) { // Make sure to check that your comparators are correct. Can probably remove the second conditional 
 //				System.out.println(array.get(i));
 				// split line into two strings containing exercise name and pr weight and add to array
 				String[] pr = array.get(i).split(",");  
 				personalRecordsList.add(pr);
 			} // there shouldn't be anything after this
 		}
-		parsePersonalRecords(personalRecordsList);
-		
+//		parsePersonalRecords(personalRecordsList);
+		user.setPersonalRecords(parsePersonalRecords(personalRecordsList));
 	}
 	
+	/**
+	 * Populates a HashMap containing a record of the personal best lifts the user has performed
+	 * @param personalRecordsList
+	 * @return
+	 * @throws NumberFormatException
+	 */
 	public HashMap<String, Integer> parsePersonalRecords(ArrayList<String[]> personalRecordsList) throws NumberFormatException{
 		HashMap<String, Integer> personalRecords = new HashMap<String, Integer>();
 		// loop through ArrayList of String arrays containing personal records for each exercise choice and add them to a HashMap
 		for (String[] pr : personalRecordsList) {
 			String exerciseName = pr[0];
-			int weight = Integer.parseInt(pr[1]);
-			personalRecords.put(exerciseName, weight);
+			try {
+				int weight = Integer.parseInt(pr[1]);
+				personalRecords.put(exerciseName, weight);
+			} catch (NumberFormatException nfe) {
+				throw new NumberFormatException("Error: Could not parse pr weight string to an integer value.");
+			}
 		}
 		return personalRecords;
 	}

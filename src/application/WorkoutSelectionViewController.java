@@ -22,7 +22,9 @@ import javafx.stage.Stage;
 public class WorkoutSelectionViewController {
 	private Stage applicationStage;
 	private Workout workout = new Workout();
-	private UserInfo user = new UserInfo(); // need to create an instance of this at the beginning, but populate it from file, use try-catch?
+	private String userFileName = "src/James.txt"; // maybe have a way of selecting/entering a user file?
+	private UserFileIO userFile = new UserFileIO(userFileName); // pass in String fileName
+	private UserInfo user = userFile.getUser();// = new UserInfo(); // need to create an instance of this at the beginning, but populate it from file, use try-catch? 
 
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
@@ -211,6 +213,10 @@ public class WorkoutSelectionViewController {
     	// calculate values in workout object to be displayed
     	workout.setTotalWeightLifted(); 
     	workout.setBestSets();
+    	ArrayList<String> newPRs = workout.checkPersonalBests(user.getPersonalRecords()); 
+    	// call function to compare the best sets hashmap to the pr hashmap
+    	// getPersonalRecords - use for comparison and modify (note that this method passes a reference to the same hashmap in userInfo
+//    	 methods might have to be public? nah.
     	
     	// create workout summary scene:
     	VBox summary = new VBox();
@@ -220,13 +226,23 @@ public class WorkoutSelectionViewController {
 		summaryTitleLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
 
 		// this label could instead be something like: "You completed your nth workout!" - would need workout history file
-    	Label congratsLabel = new Label("Congrats, you finished your workout!");
+    	Label congratsLabel = new Label("You finished your " + user.getNumWorkoutsDone() + " workout!"); // Create a method in user info to format number suffix and return message.
 		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 16));
 		VBox.setMargin(congratsLabel, new Insets(0, 10, 0, 10));
 
     	VBox summaryContent = new VBox();
     	VBox.setMargin(summaryContent, new Insets(20, 20, 20, 20));
-    	Label personRecordsLabel = new Label("***<Placeholder> You set 1 personal record! Squats: 245lbs ***"); // some logic elsewhere, pass in a string variable
+    	Label personRecordsLabel = new Label(""); 
+    	if (!newPRs.isEmpty()) {
+    		// "***<Placeholder> You set 1 personal record! Squats: 245lbs ***"
+    		if (newPRs.size() == 1) {
+    			// different text for single new PR set
+    			personRecordsLabel.setText("Congratulations! You set " + newPRs.size() + " new personal record!");
+    		} else {
+    			personRecordsLabel.setText("Congratulations! You set " + newPRs.size() + " new personal records!");
+    		}
+    	}
+    	
     	Label totalWeightLiftedLabel = new Label("Total weight lifted: " + workout.getTotalWeightLifted() + "lbs");
     	Label bestSetsHeaderLabel = new Label("Best sets: ");
     	bestSetsHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
@@ -235,7 +251,15 @@ public class WorkoutSelectionViewController {
     	// Create labels for best sets
     	ArrayList<Label> bestSetsLabels = new ArrayList<Label>();
     	workout.getBestSets().forEach((exName, strengthExercise) -> {
-    		bestSetsLabels.add(new Label(exName + ": " + strengthExercise.getReps() + "x" + strengthExercise.getWeight()+ "lbs"));
+    		String bs = exName + ": " + strengthExercise.getReps() + "x" + strengthExercise.getWeight()+ "lbs";
+    		// Concatenate new PR indicator to string 
+    		if (!newPRs.isEmpty()) {
+    			if (newPRs.contains(exName)) {
+    				bs += "   **New PR**";
+    			};
+    		}
+    		bestSetsLabels.add(new Label(bs));
+
     	});
     	for (Label bestSet : bestSetsLabels) {
         	summaryContent.getChildren().add(bestSet);
@@ -271,7 +295,7 @@ public class WorkoutSelectionViewController {
 //    	return exercises;
 //    }
     
-  
+    
     public void setApplicationStage(Stage stage) {
     	this.applicationStage = stage;
     }
