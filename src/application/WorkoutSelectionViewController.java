@@ -71,7 +71,7 @@ public class WorkoutSelectionViewController {
     		
     		// Create ChoiceBoxes containing a list of exercise choices
     		ChoiceBox<String> choiceBoxOptions = new ChoiceBox<String>();
-    		ObservableList<String> exerciseChoices = FXCollections.observableArrayList(user.createExerciseArrayList());
+    		ObservableList<String> exerciseChoices = FXCollections.observableArrayList(user.getExerciseArrayList());
     		choiceBoxOptions.getItems().addAll(exerciseChoices);
     		choiceBoxOptions.getSelectionModel().select(0); // sets default value in choiceBox
     		
