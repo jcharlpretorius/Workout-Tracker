@@ -25,12 +25,13 @@ public class WorkoutSelectionViewController {
 	private String userFileName = "src/James.txt"; // maybe have a way of selecting/entering a user file?
 	private UserFileIO userFile = new UserFileIO(userFileName); // pass in String fileName
 	private UserInfo user = userFile.getUser(); 
+	private ExerciseChoices exerciseChoices = new ExerciseChoices();
 
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
     
-    @FXML
-    private ChoiceBox<StrengthExercise> exerciseChoices = new ChoiceBox<StrengthExercise>();
+//    @FXML
+//    private ChoiceBox<StrengthExercise> exerciseChoices = new ChoiceBox<StrengthExercise>(); // not being used anymore
     
     @FXML
     /**
@@ -73,8 +74,8 @@ public class WorkoutSelectionViewController {
     		
     		// Create ChoiceBoxes containing a list of exercise choices
     		ChoiceBox<String> choiceBoxOptions = new ChoiceBox<String>();
-    		ObservableList<String> exerciseChoices = FXCollections.observableArrayList(user.getExerciseArrayList());
-    		choiceBoxOptions.getItems().addAll(exerciseChoices);
+    		ObservableList<String> exChoices = FXCollections.observableArrayList(exerciseChoices.getExerciseList());
+    		choiceBoxOptions.getItems().addAll(exChoices);
     		choiceBoxOptions.getSelectionModel().select(0); // sets default value in choiceBox
     		
     		TextField numberOfSetsTextfield = new TextField(); // should only take type int

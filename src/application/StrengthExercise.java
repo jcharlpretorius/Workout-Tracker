@@ -1,5 +1,6 @@
 package application;
 
+
 public class StrengthExercise {
 
 	private int weight;

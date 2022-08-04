@@ -11,10 +11,9 @@ public class UserInfo {
 	private int numWorkoutsDone;
 	private Date date;
 	private HashMap<String, Integer> personalRecords;
-	private ArrayList<String> exercisesList;
 
 	public UserInfo() {
-		setExerciseArrayList();
+
 		date = new Date(); 
 	}
 	
@@ -63,28 +62,4 @@ public class UserInfo {
 	void setPersonalRecords(HashMap<String, Integer> personalRecords) {
 		this.personalRecords = personalRecords;
 	}
-
-	/**
-	 * Setter method for the exercisesList ArrayList 
-	 * Contains a list of possible exercise choices
-	 */
-    public void setExerciseArrayList() {
-    	ArrayList<String> exercisesList = new ArrayList<String>();
-    	exercisesList.add("Squat");
-    	exercisesList.add("Bench Press");
-    	exercisesList.add("Dead Lift");
-    	exercisesList.add("Overhead Press");
-    	exercisesList.add("Barbell Row");
-    	exercisesList.add("Bicep Curl");
-    	exercisesList.add("Tricep Push-downs");
-    	exercisesList.add("Lateral Raises");
-    	exercisesList.add("Pull ups");
-    	exercisesList.add("Dips");
-    	
-    	this.exercisesList = exercisesList;
-    }
-    public ArrayList<String> getExerciseArrayList() {
-    	return this.exercisesList;
-    }
-
 }

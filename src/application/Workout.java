@@ -75,6 +75,7 @@ public class Workout {
 	public HashMap<String, StrengthExercise> getBestSets() {
 		return this.bestSets;
 	}
+	
 	public StrengthExercise getHeaviestSet(StrengthExercise bestSet, int index) {
 		int heaviestWeight = bestSet.getWeight();
 		// loop through ArrayList of StrengthExercise objects and return the exercise with the largest weight value 

@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class UserFileIO { 
 	private UserInfo user = new UserInfo(); 
-	private ArrayList<String> exerciseChoices;
+	private ExerciseChoices exerciseChoices = new ExerciseChoices();
 	// indices representing line numbers (starting at line 0) for the format of the text file that stores user information
 	private int nameIndex = 0;
 	private int numWorkoutsIndex = 1; 
@@ -30,7 +30,6 @@ public class UserFileIO {
 	
 	public UserFileIO(String fileName) {
 		// read a file and create a UserInfo object to store the data
-		// could create our own exception and throw it from here, or is handeling it here sufficient?
 		try {
 			parseUserInfoArray(readWorkout(fileName));
 		} catch(NumberFormatException nfe) {
@@ -79,8 +78,7 @@ public class UserFileIO {
 	 * @throws IOException
 	 */
 	public void writeWorkout(String fileName) throws IOException {
-		// 
-		int endOfFileIndex = recordsStartIndex + user.getExerciseArrayList().size(); // not sure if this works yet..
+		int endOfFileIndex = recordsStartIndex + exerciseChoices.getExerciseList().size(); 
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 		PrintWriter pWriter = new PrintWriter(writer);
 		for (int i = 0; i < endOfFileIndex; i++) {
@@ -95,12 +93,12 @@ public class UserFileIO {
 			} else if (i == dateIndex) {
 				pWriter.println(dateToString(user.getDate())); 
 			}else if (i >= recordsStartIndex) { // Make sure to check that your comparators are correct: 
-				// loop through personalRecords HashMap and write to file as CSV
+				// loop through personalRecords HashMap and write to file as comma separated values
 				user.getPersonalRecords().forEach((exerciseName, weight) -> {
 					pWriter.println(exerciseName + "," + weight);
 				});
 				break;
-			} // there shouldn't be anything after this
+			}
 		}
 
 		pWriter.close();
@@ -108,7 +106,7 @@ public class UserFileIO {
 	
 	public void parseUserInfoArray(ArrayList<String> array) throws NumberFormatException{ // I don't think this needs to throw FileNotFoundException or IOException
 		// Use the data stored in the ArrayList to set the properties of the user object
-		ArrayList<String> exerciseChoicesList = user.getExerciseArrayList(); 
+		ArrayList<String> exerciseChoicesList = exerciseChoices.getExerciseList(); 
 		ArrayList<String[]> personalRecordsList = new ArrayList<String[]>();// do you need to set the size of the String array here?
 		// You can change these values depending on which line number the information is on in the text file,
 		try {
@@ -166,21 +164,20 @@ public class UserFileIO {
 	}
 	
 	/**
-	 * 
-	 * @param date
-	 * @return
+	 * Converts a given Date object to a string in the form "dd-MM-yyyy"
+	 * @param date the Date object to be converted
+	 * @return a String containing a formatted representation of the date
 	 */
 	public String dateToString(Date date) {
-		// Converts a given Date object to a string. 
 		//Set the date format to day-month-year
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		return simpleDateFormat.format(date);
 	}
 	
 	/**
-	 * Converts a given string in the specified format into a Date object
+	 * Converts a String in the format "dd-MM-yyyy" into a Date object
 	 * @param dateString a string representing a date, in the format "dd-MM-yyyy"
-	 * @return a Date object
+	 * @return the Date object that was created from the input String
 	 */
 	public Date stringToDate(String dateString) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
