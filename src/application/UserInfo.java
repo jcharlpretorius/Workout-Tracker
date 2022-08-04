@@ -15,7 +15,7 @@ public class UserInfo {
 
 	public UserInfo() {
 		setExerciseArrayList();
-		date = new Date(); // Change this. How to get the current system time? - probably user simple date format
+		date = new Date(); 
 	}
 	
 	String getUserName() {
@@ -53,7 +53,7 @@ public class UserInfo {
 	Date getDate() {
 		return date;
 	}
-
+	
 	void setDate(Date date) {
 		this.date = date;
 	}

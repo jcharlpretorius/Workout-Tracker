@@ -16,32 +16,27 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
-public class UserFileIO { // maybe name this class to something more descriptive
-	private UserInfo user = new UserInfo(); // call default constructor in case file reading fails. ? i don't know what I'm doing anymore
+public class UserFileIO { 
+	private UserInfo user = new UserInfo(); 
 	private ArrayList<String> exerciseChoices;
-	// indexes representing line numbers (starting at line 0) for the format of the text file that stores user information
+	// indices representing line numbers (starting at line 0) for the format of the text file that stores user information
 	private int nameIndex = 0;
 	private int numWorkoutsIndex = 1; 
 	private int userHeightIndex = 2; 
-	private int userWeightsIndex = 3; // CSV bodyweights, should be a method somewhere that adds / updates this
-	private int dateIndex = 4; // CSV dates, corresponding to bodyweight for BMI calculation
+	private int userWeightsIndex = 3; // Later: CSV bodyweights, should be a method somewhere that adds / updates this
+	private int dateIndex = 4; // Later: CSV dates, corresponding to bodyweight for BMI calculation
 	private int recordsStartIndex = 5;	
 	
 	
-	
-//	private ArrayList<String> userInfoArray;
-	public UserFileIO(String fileName)  {
-		// TODO Auto-generated constructor stub
+	public UserFileIO(String fileName) {
 		// read a file and create a UserInfo object to store the data
-		// could create our own exception and throw it from here.
+		// could create our own exception and throw it from here, or is handeling it here sufficient?
 		try {
 			parseUserInfoArray(readWorkout(fileName));
 		} catch(NumberFormatException nfe) {
-			// message here??
 			System.out.println(nfe.getMessage());
 			nfe.printStackTrace();
 		}catch (FileNotFoundException fnfe) {
-			//
 			System.out.println("Error: file " + fileName + " could not be found.");
 			fnfe.printStackTrace();
 		}catch (IOException e) { 
@@ -111,7 +106,6 @@ public class UserFileIO { // maybe name this class to something more descriptive
 		pWriter.close();
 	}
 	
-	// maybe move this one to the top of the class
 	public void parseUserInfoArray(ArrayList<String> array) throws NumberFormatException{ // I don't think this needs to throw FileNotFoundException or IOException
 		// Use the data stored in the ArrayList to set the properties of the user object
 		ArrayList<String> exerciseChoicesList = user.getExerciseArrayList(); 
@@ -138,8 +132,7 @@ public class UserFileIO { // maybe name this class to something more descriptive
 				} else if (i == dateIndex) {
 					user.setDate(stringToDate(line));
 					
-				}else if (i >= recordsStartIndex && i < recordsEndIndex) { // Make sure to check that your comparators are correct. Can probably remove the second conditional 
-//					System.out.println(array.get(i));
+				}else if (i >= recordsStartIndex && i < recordsEndIndex) { // Make sure to check that your comparators are correct. Can probably remove the second conditional?
 					// split line into two strings containing exercise name and pr weight and add to array
 					String[] pr = array.get(i).split(",");  
 					personalRecordsList.add(pr);
@@ -200,10 +193,4 @@ public class UserFileIO { // maybe name this class to something more descriptive
 		}
 		return date;
 	}
-	// need to pass the best Sets hashmap to this class so I can compare the values to the current pr'r
-	// maybe UserInfo extends UserFileIO? then userInfo will get all the methods/instance variables this class has
-	// you could construct a new userInfo object by passing in the fileName/path string and use the parent class's constructor
-	
-	
-	
 }

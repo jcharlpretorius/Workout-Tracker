@@ -24,7 +24,7 @@ public class WorkoutSelectionViewController {
 	private Workout workout = new Workout();
 	private String userFileName = "src/James.txt"; // maybe have a way of selecting/entering a user file?
 	private UserFileIO userFile = new UserFileIO(userFileName); // pass in String fileName
-	private UserInfo user = userFile.getUser();// = new UserInfo(); // need to create an instance of this at the beginning, but populate it from file, use try-catch? 
+	private UserInfo user = userFile.getUser(); 
 
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
@@ -223,13 +223,9 @@ public class WorkoutSelectionViewController {
 
 		// this label could instead be something like: "You completed your nth workout!" - would need workout history file
 		int workoutNumber = user.getNumWorkoutsDone(); // append ordinal to the workout number later
-    	Label congratsLabel = new Label(user.getUserName() + ", you finished your " + workoutNumber + " workout!"); // Create a method in user info to format number suffix and return message.
+    	Label congratsLabel = new Label("Congratulations " + user.getUserName() + ",\n" + "you finished your " + workoutNumber + getOrdinalSuffix(workoutNumber) + " workout!"); // Create a method in user info to format number suffix and return message.
 		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 16));
 		VBox.setMargin(congratsLabel, new Insets(0, 10, 0, 10));
-		
-		// Date label
-		HBox dateHBox = new HBox();
-//		Label dateLabel = new Label(user.getDate());
 		
     	VBox summaryContent = new VBox();
     	VBox.setMargin(summaryContent, new Insets(20, 20, 20, 20));
@@ -238,16 +234,16 @@ public class WorkoutSelectionViewController {
     	if (!newPRs.isEmpty()) {
     		if (newPRs.size() == 1) {
     			// different text for single new PR set
-    			personRecordsLabel.setText("Congratulations! You set " + newPRs.size() + " new personal record!");
+    			personRecordsLabel.setText("You set " + newPRs.size() + " new personal record!");
     		} else {
-    			personRecordsLabel.setText("Congratulations! You set " + newPRs.size() + " new personal records!");
+    			personRecordsLabel.setText("You set " + newPRs.size() + " new personal records!");
     		}
     	}
     	
     	Label totalWeightLiftedLabel = new Label("Total weight lifted: " + workout.getTotalWeightLifted() + "lbs");
     	Label bestSetsHeaderLabel = new Label("Best sets: ");
     	bestSetsHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
-    	summaryContent.getChildren().addAll(totalWeightLiftedLabel, personRecordsLabel, bestSetsHeaderLabel);
+    	summaryContent.getChildren().addAll(personRecordsLabel,totalWeightLiftedLabel, bestSetsHeaderLabel);
     	
     	// Create labels for best sets
     	ArrayList<Label> bestSetsLabels = new ArrayList<Label>();
@@ -280,14 +276,36 @@ public class WorkoutSelectionViewController {
     	
 //    	 write user information to file
     	try {
-			userFile.writeWorkout("src/JamesAfterWorkout.txt");
+			userFile.writeWorkout(userFileName);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			System.out.println("Error: Failed to write to file");
 			e.printStackTrace();
 		}
     }
     
+    /**
+     * Gets the ordinal suffix for the input number. 
+     * This method gives the correct suffix for all numbers < 11111
+     * Citation: Code for this method modified from StackOverflow user Salman A:
+     * https://stackoverflow.com/questions/13627308/add-st-nd-rd-and-th-ordinal-suffix-to-a-number/#13627586 
+     * 
+     * @param num an integer to get the suffix for
+     * @return a 2 character string, either "st", "nd", "rd", or "th"
+     */
+    public static String getOrdinalSuffix(int num) {
+    	int i = num % 10;
+    	int j = num % 100;
+    	if (i == 1 && j != 11 && j != 111 && j != 1111) {
+    		return "st";
+    	}
+    	if (i == 2 && j != 12 && j != 112 && j != 1112) {
+    		return "nd";
+    	}
+    	if (i == 3 && j != 13 && j != 113 && j != 1113) {
+    		return "rd";
+    	}
+    	return "th";
+	}
     
     public void setApplicationStage(Stage stage) {
     	this.applicationStage = stage;

@@ -121,7 +121,6 @@ public class Workout {
 	 * @return an ArrayList of Strings with the names of the exerices for which a new record was set
 	 */
 	public ArrayList<String> checkPersonalBests(HashMap<String, Integer> personalRecordsMap) {
-		// compares the 
 		// iterate through the bestSets map and check if a mapping for that name/key
 		// exists. If it doesn't exits then add it to the PRMap and to the arrayList(?) of pr's. 
 		ArrayList<String> prList = new ArrayList<String>();
