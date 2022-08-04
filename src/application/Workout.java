@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.scene.control.Label;
+
 public class Workout {
 	private ArrayList<ArrayList<StrengthExercise>> allExercises;
 	private HashMap<String, StrengthExercise> bestSets;
@@ -109,5 +111,37 @@ public class Workout {
 		if (this.allExercises == null) {
 			this.allExercises = new ArrayList<ArrayList<StrengthExercise>>(numExercises);
 		}
+	}
+	
+	/**
+	 * Compares the HashMaps of personal bests with the workout's best sets and 
+	 * returns an ArrayList containing the names of which exercises a personal record
+	 * was broken during the workout
+	 * @param personalRecordsMap a HashMap containing the personal record of the user, read from a file
+	 * @return an ArrayList of Strings with the names of the exerices for which a new record was set
+	 */
+	public ArrayList<String> checkPersonalBests(HashMap<String, Integer> personalRecordsMap) {
+		// iterate through the bestSets map and check if a mapping for that name/key
+		// exists. If it doesn't exits then add it to the PRMap and to the arrayList(?) of pr's. 
+		ArrayList<String> prList = new ArrayList<String>();
+		// Loop through this.bestSets map
+		// null pointer exception here if we look for personalRecordsMap.containsKey(Object) because exerciseName is null
+		if (!bestSets.isEmpty()) {
+			bestSets.forEach((exerciseName, heaviestSet) -> {
+				// do something
+				if (personalRecordsMap.containsKey(exerciseName)) {
+					// if the user's best set weight is greater than current PR, then add it to PR list to be returned and update pr HashMap
+					if (heaviestSet.getWeight() > personalRecordsMap.get(exerciseName)) {
+						prList.add(exerciseName);
+						personalRecordsMap.replace(exerciseName, heaviestSet.getWeight()); // should work because we passed in a reference to the map
+					}
+				} else {
+					// personal record hasn't been recorded yet, counts as a pr
+					prList.add(exerciseName);
+					personalRecordsMap.put(exerciseName, heaviestSet.getWeight());
+				}
+			});
+		}
+		return prList;
 	}
 }

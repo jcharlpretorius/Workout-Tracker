@@ -22,6 +22,9 @@ import javafx.stage.Stage;
 public class WorkoutSelectionViewController {
 	private Stage applicationStage;
 	private Workout workout = new Workout();
+	private String userFileName = "src/James.txt"; // maybe have a way of selecting/entering a user file?
+	private UserFileIO userFile = new UserFileIO(userFileName); // pass in String fileName
+	private UserInfo user = userFile.getUser(); 
 
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
@@ -70,7 +73,8 @@ public class WorkoutSelectionViewController {
     		
     		// Create ChoiceBoxes containing a list of exercise choices
     		ChoiceBox<String> choiceBoxOptions = new ChoiceBox<String>();
-    		choiceBoxOptions.getItems().addAll(createExerciseArrayList());
+    		ObservableList<String> exerciseChoices = FXCollections.observableArrayList(user.getExerciseArrayList());
+    		choiceBoxOptions.getItems().addAll(exerciseChoices);
     		choiceBoxOptions.getSelectionModel().select(0); // sets default value in choiceBox
     		
     		TextField numberOfSetsTextfield = new TextField(); // should only take type int
@@ -129,7 +133,7 @@ public class WorkoutSelectionViewController {
     	Label exerciseNameLabel = new Label(exercise.getExerciseName());
     	VBox.setMargin(exerciseNameLabel, new Insets(0, 0, 20, 0));
     	exerciseNameLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 24));
-    	Label repsAndWeightHeaderLabel = new Label("\t\tSets \t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
+    	Label repsAndWeightHeaderLabel = new Label("\t\tReps \t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
     	allRows.getChildren().addAll(exerciseNameLabel, repsAndWeightHeaderLabel);
     	ArrayList<TextField> repsTextFields = new ArrayList<TextField>();
     	ArrayList<TextField> weightTextFields = new ArrayList<TextField>();
@@ -205,10 +209,10 @@ public class WorkoutSelectionViewController {
      * the bests sets done for each exercise
      */
     void finishWorkout() {
-    	
     	// calculate values in workout object to be displayed
     	workout.setTotalWeightLifted(); 
     	workout.setBestSets();
+    	ArrayList<String> newPRs = workout.checkPersonalBests(user.getPersonalRecords()); 
     	
     	// create workout summary scene:
     	VBox summary = new VBox();
@@ -218,22 +222,41 @@ public class WorkoutSelectionViewController {
 		summaryTitleLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
 
 		// this label could instead be something like: "You completed your nth workout!" - would need workout history file
-    	Label congratsLabel = new Label("Congrats, you finished your workout!");
+		int workoutNumber = user.getNumWorkoutsDone(); // append ordinal to the workout number later
+    	Label congratsLabel = new Label("Congratulations " + user.getUserName() + ",\n" + "you finished your " + workoutNumber + getOrdinalSuffix(workoutNumber) + " workout!"); // Create a method in user info to format number suffix and return message.
 		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 16));
 		VBox.setMargin(congratsLabel, new Insets(0, 10, 0, 10));
-
+		
     	VBox summaryContent = new VBox();
     	VBox.setMargin(summaryContent, new Insets(20, 20, 20, 20));
-    	Label personRecordsLabel = new Label("***<Placeholder> You set 1 personal record! Squats: 245lbs ***"); // some logic elsewhere, pass in a string variable
+    	
+    	Label personRecordsLabel = new Label(""); 
+    	if (!newPRs.isEmpty()) {
+    		if (newPRs.size() == 1) {
+    			// different text for single new PR set
+    			personRecordsLabel.setText("You set " + newPRs.size() + " new personal record!");
+    		} else {
+    			personRecordsLabel.setText("You set " + newPRs.size() + " new personal records!");
+    		}
+    	}
+    	
     	Label totalWeightLiftedLabel = new Label("Total weight lifted: " + workout.getTotalWeightLifted() + "lbs");
     	Label bestSetsHeaderLabel = new Label("Best sets: ");
     	bestSetsHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
-    	summaryContent.getChildren().addAll(totalWeightLiftedLabel, personRecordsLabel, bestSetsHeaderLabel);
+    	summaryContent.getChildren().addAll(personRecordsLabel,totalWeightLiftedLabel, bestSetsHeaderLabel);
     	
     	// Create labels for best sets
     	ArrayList<Label> bestSetsLabels = new ArrayList<Label>();
     	workout.getBestSets().forEach((exName, strengthExercise) -> {
-    		bestSetsLabels.add(new Label(exName + ": " + strengthExercise.getReps() + "x" + strengthExercise.getWeight()+ "lbs"));
+    		String bs = exName + ": " + strengthExercise.getReps() + "x" + strengthExercise.getWeight()+ "lbs";
+    		// Concatenate new PR indicator to string 
+    		if (!newPRs.isEmpty()) {
+    			if (newPRs.contains(exName)) {
+    				bs += "   **New PR**";
+    			};
+    		}
+    		bestSetsLabels.add(new Label(bs));
+
     	});
     	for (Label bestSet : bestSetsLabels) {
         	summaryContent.getChildren().add(bestSet);
@@ -244,33 +267,46 @@ public class WorkoutSelectionViewController {
     	// Switch to the workout summary scene
     	Scene workoutSummary = new Scene(summary);
     	applicationStage.setScene(workoutSummary);
-    }
-    
-   /**
-    * Returns a list of exercise choices
-    * @return
-    */
-    public ObservableList<String> createExerciseArrayList() {
-    	// temporary solution for populating exercise ChoiceBoxes 
-    	// pull this out to a method or class later. Or read from a file.
+    	System.out.println("Name: " + user.getUserName());
+    	System.out.println("Num workouts Done: " + user.getNumWorkoutsDone());
+    	System.out.println("User height: " + user.getHeight());
+    	System.out.println("User BodyWeight: " + user.getBodyWeight());
+    	System.out.println("Personal Records: " + user.getPersonalRecords());
 
-    	ArrayList<String> exercises = new ArrayList<String>();
-    	exercises.add("Squat");
-    	exercises.add("Bench Press");
-    	exercises.add("Dead Lift");
-    	exercises.add("Overhead Press");
-    	exercises.add("Barbell Row");
-    	exercises.add("Bicep Curl");
-    	exercises.add("Tricep Push-downs");
-    	exercises.add("Lateral Raises");
-    	exercises.add("Pull ups");
-    	exercises.add("Dips");
-    	ObservableList<String> exercisesList = FXCollections.observableArrayList(exercises);
     	
-    	return exercisesList;
+//    	 write user information to file
+    	try {
+			userFile.writeWorkout(userFileName);
+		} catch (IOException e) {
+			System.out.println("Error: Failed to write to file");
+			e.printStackTrace();
+		}
     }
     
-  
+    /**
+     * Gets the ordinal suffix for the input number. 
+     * This method gives the correct suffix for all numbers < 11111
+     * Citation: Code for this method modified from StackOverflow user Salman A:
+     * https://stackoverflow.com/questions/13627308/add-st-nd-rd-and-th-ordinal-suffix-to-a-number/#13627586 
+     * 
+     * @param num an integer to get the suffix for
+     * @return a 2 character string, either "st", "nd", "rd", or "th"
+     */
+    public static String getOrdinalSuffix(int num) {
+    	int i = num % 10;
+    	int j = num % 100;
+    	if (i == 1 && j != 11 && j != 111 && j != 1111) {
+    		return "st";
+    	}
+    	if (i == 2 && j != 12 && j != 112 && j != 1112) {
+    		return "nd";
+    	}
+    	if (i == 3 && j != 13 && j != 113 && j != 1113) {
+    		return "rd";
+    	}
+    	return "th";
+	}
+    
     public void setApplicationStage(Stage stage) {
     	this.applicationStage = stage;
     }
