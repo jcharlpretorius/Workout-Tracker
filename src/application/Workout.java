@@ -2,10 +2,17 @@ package application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-import javafx.scene.control.Label;
 
+/**
+ * The Workout class is a representation of a strength workout.
+ * It contains information about all of the exercise sets including their number of 
+ * repetitions and weights lifted. Workout contains methods to calculate values 
+ * about the workout as a whole, such as the total amount of weight lifted and what 
+ * the best sets the user performed are
+ * @author JC
+ *
+ */
 public class Workout {
 	private ArrayList<ArrayList<StrengthExercise>> allExercises;
 	private HashMap<String, StrengthExercise> bestSets;
@@ -75,6 +82,7 @@ public class Workout {
 	public HashMap<String, StrengthExercise> getBestSets() {
 		return this.bestSets;
 	}
+	
 	public StrengthExercise getHeaviestSet(StrengthExercise bestSet, int index) {
 		int heaviestWeight = bestSet.getWeight();
 		// loop through ArrayList of StrengthExercise objects and return the exercise with the largest weight value 
@@ -124,11 +132,9 @@ public class Workout {
 		// iterate through the bestSets map and check if a mapping for that name/key
 		// exists. If it doesn't exits then add it to the PRMap and to the arrayList(?) of pr's. 
 		ArrayList<String> prList = new ArrayList<String>();
-		// Loop through this.bestSets map
-		// null pointer exception here if we look for personalRecordsMap.containsKey(Object) because exerciseName is null
+		// Loop through bestSets map and check if the weight lifted in the best set is greater than the user's personal best weight
 		if (!bestSets.isEmpty()) {
 			bestSets.forEach((exerciseName, heaviestSet) -> {
-				// do something
 				if (personalRecordsMap.containsKey(exerciseName)) {
 					// if the user's best set weight is greater than current PR, then add it to PR list to be returned and update pr HashMap
 					if (heaviestSet.getWeight() > personalRecordsMap.get(exerciseName)) {

@@ -16,9 +16,15 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
+/**
+ * A class for reading and writing a user's information and workout history to a file.
+ * Uses the information in the file to set parameters of a UserInfo object
+ * @author JC
+ * 
+ */
 public class UserFileIO { 
-	private UserInfo user = new UserInfo(); 
-	private ArrayList<String> exerciseChoices;
+	private UserInfo user; 
+	private ExerciseChoices exerciseChoices;
 	// indices representing line numbers (starting at line 0) for the format of the text file that stores user information
 	private int nameIndex = 0;
 	private int numWorkoutsIndex = 1; 
@@ -27,10 +33,13 @@ public class UserFileIO {
 	private int dateIndex = 4; // Later: CSV dates, corresponding to bodyweight for BMI calculation
 	private int recordsStartIndex = 5;	
 	
-	
+	/**
+	 * Read a file of the user's information and store the values in the user object
+	 * @param fileName The name of the file to be read. eg "src/userName.txt"
+	 */
 	public UserFileIO(String fileName) {
-		// read a file and create a UserInfo object to store the data
-		// could create our own exception and throw it from here, or is handeling it here sufficient?
+		user = new UserInfo();
+		exerciseChoices = new ExerciseChoices();
 		try {
 			parseUserInfoArray(readWorkout(fileName));
 		} catch(NumberFormatException nfe) {
@@ -53,9 +62,9 @@ public class UserFileIO {
 	}
 	
 	/**
-	 * Read the user's information and workout history from a file and put each line into an ArrayList
-	 * @param fileName A string containing the filename that the user's information is store in
-	 * @return
+	 * Read the user's information and workout history from a file and put each line into an ArrayList of String
+	 * @param fileName The filename that the user's information is store in
+	 * @return the lines of the read from the text file
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
@@ -74,13 +83,14 @@ public class UserFileIO {
 		return userInfoArray;
 	}
 	/**
-	 * Write the user's workout data to a file. Writes over the existing file 
-	 * @param fileName
+	 * Write the user's workout data to a file. Writes over the existing file with information
+	 * from the user object's parameters, including the user's name, height, and body weight, 
+	 * the date, the number of workouts done, and the user's personal best weight lifted for each exercise they have performed
+	 * @param fileName The file name which the method writes to 
 	 * @throws IOException
 	 */
 	public void writeWorkout(String fileName) throws IOException {
-		// 
-		int endOfFileIndex = recordsStartIndex + user.getExerciseArrayList().size(); // not sure if this works yet..
+		int endOfFileIndex = recordsStartIndex + exerciseChoices.getExerciseList().size(); 
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 		PrintWriter pWriter = new PrintWriter(writer);
 		for (int i = 0; i < endOfFileIndex; i++) {
@@ -94,29 +104,37 @@ public class UserFileIO {
 				pWriter.println(user.getBodyWeight());
 			} else if (i == dateIndex) {
 				pWriter.println(dateToString(user.getDate())); 
-			}else if (i >= recordsStartIndex) { // Make sure to check that your comparators are correct: 
-				// loop through personalRecords HashMap and write to file as CSV
+			}else if (i >= recordsStartIndex) { 
+				// loop through personalRecords HashMap and write to file as comma separated values
 				user.getPersonalRecords().forEach((exerciseName, weight) -> {
 					pWriter.println(exerciseName + "," + weight);
 				});
 				break;
-			} // there shouldn't be anything after this
+			}
 		}
 
 		pWriter.close();
 	}
 	
+	/**
+	 * Parses the text read from a user file into usable data.
+	 * This method gets the contents of each line of a text file and sets the values parsed from
+	 * the text to parameters of the user object.
+	 * Values include the user's name, height, and body weight, the date, the number of workouts done, 
+	 * and the user's personal best weight lifted for each exercise they have performed
+	 * @param a list containing the lines text read from the text file 
+	 * @throws NumberFormatException 
+	 */
 	public void parseUserInfoArray(ArrayList<String> array) throws NumberFormatException{ // I don't think this needs to throw FileNotFoundException or IOException
 		// Use the data stored in the ArrayList to set the properties of the user object
-		ArrayList<String> exerciseChoicesList = user.getExerciseArrayList(); 
+		ArrayList<String> exerciseChoicesList = exerciseChoices.getExerciseList(); 
 		ArrayList<String[]> personalRecordsList = new ArrayList<String[]>();// do you need to set the size of the String array here?
-		// You can change these values depending on which line number the information is on in the text file,
 		try {
 			int recordsEndIndex = recordsStartIndex + exerciseChoicesList.size();
 			
 			for (int i = 0; i < array.size(); i++) {
 				String line = array.get(i);
-				
+				// Sets the user parameters with the appropriate element in the list
 				if (i == nameIndex) {
 					user.setUserName(line);
 					
@@ -136,7 +154,7 @@ public class UserFileIO {
 					// split line into two strings containing exercise name and pr weight and add to array
 					String[] pr = array.get(i).split(",");  
 					personalRecordsList.add(pr);
-				} // there shouldn't be anything after this
+				} 
 			}
 			user.setPersonalRecords(parsePersonalRecords(personalRecordsList));
 		} catch (NumberFormatException nfe) {
@@ -145,9 +163,9 @@ public class UserFileIO {
 	}
 	
 	/**
-	 * Populates a HashMap containing a record of the personal best lifts the user has performed
-	 * @param personalRecordsList
-	 * @return
+	 * Converts lines of text read from a file into a map containing the user's personal records for the best lifts they have performed
+	 * @param personalRecordsList a list containing the user's personal records
+	 * @return the user's personal records
 	 * @throws NumberFormatException
 	 */
 	public HashMap<String, Integer> parsePersonalRecords(ArrayList<String[]> personalRecordsList) throws NumberFormatException{
@@ -166,21 +184,20 @@ public class UserFileIO {
 	}
 	
 	/**
-	 * 
-	 * @param date
-	 * @return
+	 * Converts a given Date object to a string in the form "dd-MM-yyyy"
+	 * @param date the date to be converted
+	 * @return The properly formatted date
 	 */
 	public String dateToString(Date date) {
-		// Converts a given Date object to a string. 
 		//Set the date format to day-month-year
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		return simpleDateFormat.format(date);
 	}
 	
 	/**
-	 * Converts a given string in the specified format into a Date object
-	 * @param dateString a string representing a date, in the format "dd-MM-yyyy"
-	 * @return a Date object
+	 * Converts a String in the format "dd-MM-yyyy" into a Date object
+	 * @param dateString a date in the format "dd-MM-yyyy"
+	 * @return the date that was created from the input String
 	 */
 	public Date stringToDate(String dateString) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
