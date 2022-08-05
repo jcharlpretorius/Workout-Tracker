@@ -1,14 +1,15 @@
 package application;
 
 /**
- * The ExerciseSets class stores the number of sets and the name of the exercise
+ * The ExerciseSets class stores the number of sets, the name of the exercise,
+ * and the number of the exercise representing its place in the workout
  * @author JC
  *
  */
 public class ExerciseSets {
 	private String exerciseName;
 	private int numberOfSets;
-	private int exerciseNumber; // this isn't used anymore
+	private int exerciseNumber; 
 	
 	public ExerciseSets(String exerciseName, int numberOfSets, int exerciseNumber) {
 		this.exerciseName = new String(exerciseName);

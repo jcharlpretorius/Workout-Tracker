@@ -2,10 +2,17 @@ package application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-import javafx.scene.control.Label;
 
+/**
+ * The Workout class is a representation of a strength workout.
+ * It contains information about all of the exercise sets including their number of 
+ * repetitions and weights lifted. Workout contains methods to calculate values 
+ * about the workout as a whole, such as the total amount of weight lifted and what 
+ * the best sets the user performed are
+ * @author JC
+ *
+ */
 public class Workout {
 	private ArrayList<ArrayList<StrengthExercise>> allExercises;
 	private HashMap<String, StrengthExercise> bestSets;
