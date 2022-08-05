@@ -18,7 +18,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
+/**
+ * The javafx controller class for the workout application.
+ * Manages the graphical user interface and some basic user funtionality 
+ * @author JC
+ *
+ */
 public class WorkoutSelectionViewController {
 	private Stage applicationStage;
 	private Workout workout = new Workout();
@@ -29,20 +34,6 @@ public class WorkoutSelectionViewController {
 
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
-    
-//    @FXML
-//    private ChoiceBox<StrengthExercise> exerciseChoices = new ChoiceBox<StrengthExercise>(); // not being used anymore
-    
-    @FXML
-    /**
-     * Switch the scene back to the workout selection scene
-     * @param workoutSelectionScene a scene that holds the previous scene 
-     * (the workout selection scene) so that the scene can be switched back to that scene
-     */
-    private void exitWorkout(Scene workoutSelectionScene) {
-    	// change scene back to work out selection scene
-    	applicationStage.setScene(workoutSelectionScene);
-    }
 
     @FXML
    /**
@@ -74,22 +65,24 @@ public class WorkoutSelectionViewController {
     		
     		// Create ChoiceBoxes containing a list of exercise choices
     		ChoiceBox<String> choiceBoxOptions = new ChoiceBox<String>();
+    		// Create an observable list from the ArrayList of exercise names to display as choices
     		ObservableList<String> exChoices = FXCollections.observableArrayList(exerciseChoices.getExerciseList());
     		choiceBoxOptions.getItems().addAll(exChoices);
     		choiceBoxOptions.getSelectionModel().select(0); // sets default value in choiceBox
     		
-    		TextField numberOfSetsTextfield = new TextField(); // should only take type int
+    		// creates the text field for the user to input the number of sets
+    		TextField numberOfSetsTextfield = new TextField(); 
     		numberOfSetsTextfield.setPrefWidth(80);
     		numberOfSetsTextfield.setAlignment(Pos.CENTER);
     		setsTextFields.add(numberOfSetsTextfield); 
     		
     		Button startExercise = new Button("Start Exercise");
-	
-    		// need to validate the input of the textfields so that they only allow integers and choicebox is not empty
-    		// probably pull the input validation into another class or method 
     		int exerciseNumber = rowCounter + 1;
+    		
+    		// Button press to switch to the scene to get the user's input for reps and weight
     		startExercise.setOnAction(startExerciseEvent -> {
-    			int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText());    			
+    			int numberOfSets = Integer.parseInt(numberOfSetsTextfield.getText());    
+    			// create new ExerciseSets object to store the set information
     			ExerciseSets exercise = new ExerciseSets(choiceBoxOptions.getValue(), numberOfSets, exerciseNumber);
     			getRepsAndWeight(applicationStage.getScene(), exercise);
     		});
@@ -118,8 +111,18 @@ public class WorkoutSelectionViewController {
     }
     
     /**
-     * Creates and switches to a Scene to get the user's input for the number of repetitions
-     * and weight lifted for each set based on the type of exercise and number of sets the
+     * Exit the workout and switch the scene back to the workout selection scene
+     * @param workoutSelectionScene a scene that holds the previous scene 
+     * (the workout selection scene) so that the scene can be switched back to that scene
+     */
+    private void exitWorkout(Scene workoutSelectionScene) {
+    	// change scene back to work out selection scene
+    	applicationStage.setScene(workoutSelectionScene);
+    }
+    
+    /**
+     * Creates and changes to a Scene to get the user's input for the number of repetitions
+     * and weight lifted for each set based on the name of exercise chosen and number of sets the
      * user enters 
      * 
      * @param exerciseSelectionScene the Scene that will be switched back to, passed as an argument to storeSets()
@@ -131,11 +134,16 @@ public class WorkoutSelectionViewController {
 //    	Inset labelMargins = new Insets(20, 20, 20, 20)); // if insets are reused the could be made variables
     	// values refer to: (top, right, bottom, left)
     	allRows.setPadding(new Insets(20, 20, 20, 20));
+    	
+    	// Create label to display the exercise name at the top
     	Label exerciseNameLabel = new Label(exercise.getExerciseName());
     	VBox.setMargin(exerciseNameLabel, new Insets(0, 0, 20, 0));
     	exerciseNameLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 24));
+    	
+    	// Create labels to go above the text fields
     	Label repsAndWeightHeaderLabel = new Label("\t\tReps \t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
     	allRows.getChildren().addAll(exerciseNameLabel, repsAndWeightHeaderLabel);
+    	
     	ArrayList<TextField> repsTextFields = new ArrayList<TextField>();
     	ArrayList<TextField> weightTextFields = new ArrayList<TextField>();
 
@@ -146,14 +154,20 @@ public class WorkoutSelectionViewController {
     		HBox.setMargin(setsRow, new Insets(10, 10, 5, 10));
     		
     		Label setLabel = new Label("Set " + (rowCounter + 1)); // how to prevent row from shifting to the right when set# is > 1 digit?
+    		
+    		// Create text field for the number of repetitions
     		TextField reps = new TextField();
     		reps.setPrefWidth(40);
     		reps.setPromptText("Reps");
     		reps.setAlignment(Pos.CENTER);
     		repsTextFields.add(reps);
+    		
+    		// Add a "X" label in between text fields
     		Label xLabel = new Label("X");
     		// how to set font style: https://coderslegacy.com/java/javafx-font/
     		xLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 20));
+    		
+    		// Create text field for the weight lifted
     		TextField weight = new TextField();
     		weight.setPrefWidth(90);
     		weight.setPromptText("Weight (lbs)");
@@ -167,10 +181,12 @@ public class WorkoutSelectionViewController {
     	}
     	
     	Button doneButton = new Button("Done");
-
+    	
+    	// Done button calls storeSets function to store the values in the text fields
     	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields));
     	allRows.getChildren().add(doneButton);
     	
+    	// Finally, change to the scene created above
     	Scene repsAndWeights = new Scene(allRows);
     	applicationStage.setScene(repsAndWeights);
     }
@@ -188,10 +204,8 @@ public class WorkoutSelectionViewController {
     void storeSets(Scene exerciseSelectionScene, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
     	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
    
-    	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
-    
     	// create StrengthExercise objects from ArrayLists of TextField inputs and add them to the ArrayList of all exercises 
-    	// need to implement input validation on the text fields 
+    	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
     	for (int i = 0; i < repsTextFields.size(); i++) {
     		int reps = Integer.parseInt(repsTextFields.get(i).getText());
     		int weight = Integer.parseInt(weightTextFields.get(i).getText());
@@ -201,6 +215,8 @@ public class WorkoutSelectionViewController {
     	
     	// Add the Arraylist of exercises to ArrayList for all the exercises done in the workout
     	workout.setAllExercises(exercise.getExerciseNumber(), exercisesDone);
+    	
+    	// Change the scene back to the exercise selection scene
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
@@ -222,31 +238,35 @@ public class WorkoutSelectionViewController {
     	Label summaryTitleLabel = new Label("Workout Summary");
 		summaryTitleLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
 
-		// this label could instead be something like: "You completed your nth workout!" - would need workout history file
-		int workoutNumber = user.getNumWorkoutsDone(); // append ordinal to the workout number later
-    	Label congratsLabel = new Label("Congratulations " + user.getUserName() + ",\n" + "you finished your " + workoutNumber + getOrdinalSuffix(workoutNumber) + " workout!"); // Create a method in user info to format number suffix and return message.
+		// Label to display the number of workouts done
+		int workoutNumber = user.getNumWorkoutsDone(); 
+    	Label congratsLabel = new Label("Congratulations " + user.getUserName() + ",\n" + "you finished your " + workoutNumber + getOrdinalSuffix(workoutNumber) + " workout!"); 
 		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 16));
 		VBox.setMargin(congratsLabel, new Insets(0, 10, 0, 10));
 		
     	VBox summaryContent = new VBox();
     	VBox.setMargin(summaryContent, new Insets(20, 20, 20, 20));
     	
+    	// Create labels for the personal bests, if any have been broken
     	Label personRecordsLabel = new Label(""); 
     	if (!newPRs.isEmpty()) {
+    		String prText = "You set " + newPRs.size() + " new personal record";
     		if (newPRs.size() == 1) {
-    			// different text for single new PR set
-    			personRecordsLabel.setText("You set " + newPRs.size() + " new personal record!");
+    			prText += "!";
     		} else {
-    			personRecordsLabel.setText("You set " + newPRs.size() + " new personal records!");
+    			// Handle grammar for plural case, append an "s"
+    			prText += "s!";
     		}
+    		personRecordsLabel.setText(prText);
     	}
     	
+    	// Create labels for total weight lifted and a header for the best sets
     	Label totalWeightLiftedLabel = new Label("Total weight lifted: " + workout.getTotalWeightLifted() + "lbs");
     	Label bestSetsHeaderLabel = new Label("Best sets: ");
     	bestSetsHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
     	summaryContent.getChildren().addAll(personRecordsLabel,totalWeightLiftedLabel, bestSetsHeaderLabel);
     	
-    	// Create labels for best sets
+    	// Create labels for displaying best sets from a list
     	ArrayList<Label> bestSetsLabels = new ArrayList<Label>();
     	workout.getBestSets().forEach((exName, strengthExercise) -> {
     		String bs = exName + ": " + strengthExercise.getReps() + "x" + strengthExercise.getWeight()+ "lbs";
@@ -259,6 +279,7 @@ public class WorkoutSelectionViewController {
     		bestSetsLabels.add(new Label(bs));
 
     	});
+    	// Add best sets labels to the VBox
     	for (Label bestSet : bestSetsLabels) {
         	summaryContent.getChildren().add(bestSet);
     	}
@@ -268,6 +289,8 @@ public class WorkoutSelectionViewController {
     	// Switch to the workout summary scene
     	Scene workoutSummary = new Scene(summary);
     	applicationStage.setScene(workoutSummary);
+    	
+    	// Print Statements for testing, remove before submitting final version
     	System.out.println("Name: " + user.getUserName());
     	System.out.println("Num workouts Done: " + user.getNumWorkoutsDone());
     	System.out.println("User height: " + user.getHeight());

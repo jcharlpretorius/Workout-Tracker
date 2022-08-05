@@ -1,6 +1,12 @@
 package application;
 
-
+/**
+ * The StrengthExercise class is a representation of a single set in a workout.
+ * It contains the name of the exercise, the number of repetitions performed, and 
+ * the weight lifted in that set.
+ * @author JC
+ *
+ */
 public class StrengthExercise {
 
 	private int weight;

@@ -4,6 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * The UserInfo class contains the basic physical information about a user and
+ * the history of workouts they have completed. 
+ * Contains parameters for the user's name, height, and body weight, the current date, the number of workouts done, 
+ *and a list of the user's personal best weight lifted for each exercise they have performed
+ * @author JC
+ *
+ */
 public class UserInfo {
 	private String userName;
 	private Double bodyWeight;
@@ -13,7 +21,7 @@ public class UserInfo {
 	private HashMap<String, Integer> personalRecords;
 
 	public UserInfo() {
-
+		// sets the date to the current date
 		date = new Date(); 
 	}
 	

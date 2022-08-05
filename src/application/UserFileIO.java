@@ -16,9 +16,15 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
+/**
+ * A class for reading and writing a user's information and workout history to a file.
+ * Uses the information in the file to set parameters of a UserInfo object
+ * @author JC
+ * 
+ */
 public class UserFileIO { 
-	private UserInfo user = new UserInfo(); 
-	private ExerciseChoices exerciseChoices = new ExerciseChoices();
+	private UserInfo user; 
+	private ExerciseChoices exerciseChoices;
 	// indices representing line numbers (starting at line 0) for the format of the text file that stores user information
 	private int nameIndex = 0;
 	private int numWorkoutsIndex = 1; 
@@ -27,9 +33,13 @@ public class UserFileIO {
 	private int dateIndex = 4; // Later: CSV dates, corresponding to bodyweight for BMI calculation
 	private int recordsStartIndex = 5;	
 	
-	
+	/**
+	 * Read a file of the user's information and store the values in the user object
+	 * @param fileName a String containing the name of the file to be read. eg "src/userName.txt"
+	 */
 	public UserFileIO(String fileName) {
-		// read a file and create a UserInfo object to store the data
+		user = new UserInfo();
+		exerciseChoices = new ExerciseChoices();
 		try {
 			parseUserInfoArray(readWorkout(fileName));
 		} catch(NumberFormatException nfe) {
@@ -52,9 +62,9 @@ public class UserFileIO {
 	}
 	
 	/**
-	 * Read the user's information and workout history from a file and put each line into an ArrayList
+	 * Read the user's information and workout history from a file and put each line into an ArrayList of String
 	 * @param fileName A string containing the filename that the user's information is store in
-	 * @return
+	 * @return an ArrayList of Strings containing the lines of the read text file
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
@@ -73,8 +83,10 @@ public class UserFileIO {
 		return userInfoArray;
 	}
 	/**
-	 * Write the user's workout data to a file. Writes over the existing file 
-	 * @param fileName
+	 * Write the user's workout data to a file. Writes over the existing file with information
+	 * from the user object's parameters, including the user's name, height, and body weight, 
+	 * the date, the number of workouts done, and the user's personal best weight lifted for each exercise they have performed
+	 * @param fileName a String containing the file name which the method writes to 
 	 * @throws IOException
 	 */
 	public void writeWorkout(String fileName) throws IOException {
@@ -92,7 +104,7 @@ public class UserFileIO {
 				pWriter.println(user.getBodyWeight());
 			} else if (i == dateIndex) {
 				pWriter.println(dateToString(user.getDate())); 
-			}else if (i >= recordsStartIndex) { // Make sure to check that your comparators are correct: 
+			}else if (i >= recordsStartIndex) { 
 				// loop through personalRecords HashMap and write to file as comma separated values
 				user.getPersonalRecords().forEach((exerciseName, weight) -> {
 					pWriter.println(exerciseName + "," + weight);
@@ -104,17 +116,25 @@ public class UserFileIO {
 		pWriter.close();
 	}
 	
+	/**
+	 * Parses the text read from a user file into usable data.
+	 * This method gets the contents of each line of a text file and sets the values parsed from
+	 * the text to parameters of the user object.
+	 * Values include the user's name, height, and body weight, the date, the number of workouts done, 
+	 * and the user's personal best weight lifted for each exercise they have performed
+	 * @param array the ArrayList containing every line of the read text file as Strings
+	 * @throws NumberFormatException 
+	 */
 	public void parseUserInfoArray(ArrayList<String> array) throws NumberFormatException{ // I don't think this needs to throw FileNotFoundException or IOException
 		// Use the data stored in the ArrayList to set the properties of the user object
 		ArrayList<String> exerciseChoicesList = exerciseChoices.getExerciseList(); 
 		ArrayList<String[]> personalRecordsList = new ArrayList<String[]>();// do you need to set the size of the String array here?
-		// You can change these values depending on which line number the information is on in the text file,
 		try {
 			int recordsEndIndex = recordsStartIndex + exerciseChoicesList.size();
 			
 			for (int i = 0; i < array.size(); i++) {
 				String line = array.get(i);
-				
+				// Sets the user parameters with the appropriate element in the list
 				if (i == nameIndex) {
 					user.setUserName(line);
 					
@@ -134,7 +154,7 @@ public class UserFileIO {
 					// split line into two strings containing exercise name and pr weight and add to array
 					String[] pr = array.get(i).split(",");  
 					personalRecordsList.add(pr);
-				} // there shouldn't be anything after this
+				} 
 			}
 			user.setPersonalRecords(parsePersonalRecords(personalRecordsList));
 		} catch (NumberFormatException nfe) {

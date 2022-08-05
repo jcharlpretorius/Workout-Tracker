@@ -125,11 +125,9 @@ public class Workout {
 		// iterate through the bestSets map and check if a mapping for that name/key
 		// exists. If it doesn't exits then add it to the PRMap and to the arrayList(?) of pr's. 
 		ArrayList<String> prList = new ArrayList<String>();
-		// Loop through this.bestSets map
-		// null pointer exception here if we look for personalRecordsMap.containsKey(Object) because exerciseName is null
+		// Loop through bestSets map and check if the weight lifted in the best set is greater than the user's personal best weight
 		if (!bestSets.isEmpty()) {
 			bestSets.forEach((exerciseName, heaviestSet) -> {
-				// do something
 				if (personalRecordsMap.containsKey(exerciseName)) {
 					// if the user's best set weight is greater than current PR, then add it to PR list to be returned and update pr HashMap
 					if (heaviestSet.getWeight() > personalRecordsMap.get(exerciseName)) {

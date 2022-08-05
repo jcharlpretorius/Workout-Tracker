@@ -2,6 +2,12 @@ package application;
 
 import java.util.ArrayList;
 
+/**
+ * The exerciseChoices class has all of the possible exercises that a user can choose to do
+ * during their workout.
+ * @author JC
+ *
+ */
 public class ExerciseChoices {
 	private ArrayList<String> exerciseList = new ArrayList<String>();
 
