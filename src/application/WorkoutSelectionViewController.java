@@ -205,7 +205,7 @@ public class WorkoutSelectionViewController {
      */
     @FXML
     void getBMI(ActionEvent event) {
-    	//main scene
+    	//main scene (workout selection aka the first scene when main is run)
     	Scene workoutSelection = applicationStage.getScene();
     	
     	System.out.println("Scene Change to BMI CALCULATOR");
@@ -213,6 +213,7 @@ public class WorkoutSelectionViewController {
     	//creating new scene containers
     	VBox bmiContainer = new VBox();
     	HBox rowContainer = new HBox();
+    	
     	
     	//creating new scene controls/widgets
     	Label weightLabel = new Label("Enter your body weight");
