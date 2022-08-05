@@ -199,6 +199,29 @@ public class WorkoutSelectionViewController {
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
+    double calculatedBMI = 0;
+    boolean isMetric = true;
+    Label calculatedBMILabel = new Label();
+	
+    void calculateBMI(TextField weightTextField, TextField heightTextField, boolean isMetric) {
+    	
+    	double weight = Double.parseDouble(weightTextField.getText());
+    	double height = Double.parseDouble(heightTextField.getText());
+    	
+    	if (isMetric) {
+    		calculatedBMI = weight/(height*height);
+    		System.out.println(weight);
+    		System.out.println(height);
+    		System.out.println(calculatedBMI);
+    	}else {
+    		calculatedBMI = (weight*703)/(height*height);
+    		System.out.println(calculatedBMI);
+    	}
+    	
+    	calculatedBMILabel.setText("Your BMI is: " + String.valueOf(calculatedBMI));
+    	
+    }
+    
     /**
      * Gets to BMI calculator scene
      * @param event: 'Calculate BMI button' switches scene to the BMI calculator.
@@ -221,21 +244,41 @@ public class WorkoutSelectionViewController {
     	Label heightlabel = new Label("Enter your height");
     	TextField heightTextField = new TextField();
     	
+    	// change unit button (CHANGE SCENE TO A NEW SCENE WHERE THE CALCULATIONS WILL BE DONE IN IMPERIAL)
+    	
+    	
+    	ToggleButton changeUnitButton = new ToggleButton("Change unit to imperial.");
+  
+    	//changeUnitButton.setSelected(true);
+    	
+    	changeUnitButton.setOnAction(changeUnitEvent -> {
+    		
+    		if (changeUnitButton.isSelected()) {
+        		changeUnitButton.setText("Change unit to metric.");
+        		isMetric = false;
+        	}else {
+        		changeUnitButton.setText("Change unit to imperial.");
+        		isMetric = true;
+        	}
+    		
+    	});
+    	
+    	
+    	calculatedBMILabel.setText("Your BMI is: ");
     	//calculate bmi button (SHOULD CALCULATE THE BMI AND SHOW IT ON SCREEN)
     	Button calcualteBMIButton = new Button("Calculate BMI!");
-    	calcualteBMIButton.setOnAction(doneEvent -> System.out.println("calculate button pressed"));
+    	calcualteBMIButton.setOnAction(doneEvent -> calculateBMI(weightTextField,heightTextField,isMetric));
     	
     	rowContainer.getChildren().addAll(weightLabel,weightTextField,heightlabel,heightTextField,calcualteBMIButton);
     	
-    	// change unit button (CHANGE SCENE TO A NEW SCENE WHERE THE CALCULATIONS WILL BE DONE IN IMPERIAL)
-    	Button changeUnitButton = new Button("Change unit to imperial.");
-    	changeUnitButton.setOnAction(doneEvent -> System.out.println("unit button pressed"));
+    	
     	
     	Button exitBMIScreen = new Button("Exit to main menu.");
     	exitBMIScreen.setOnAction(exitEvent -> exitWorkout(workoutSelection));
     	
     	
-    	bmiContainer.getChildren().addAll(rowContainer,changeUnitButton,exitBMIScreen);	
+    	bmiContainer.getChildren().addAll(rowContainer,changeUnitButton,exitBMIScreen,calculatedBMILabel);	
+    	
     	
     	Scene getBMI = new Scene(bmiContainer);
     	applicationStage.setScene(getBMI);
@@ -243,6 +286,8 @@ public class WorkoutSelectionViewController {
     	
     	
     }
+    
+	
     
 
     /**
