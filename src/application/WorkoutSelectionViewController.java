@@ -199,24 +199,48 @@ public class WorkoutSelectionViewController {
     	applicationStage.setScene(exerciseSelectionScene);
     }
     
-
+    /**
+     * Gets to BMI calculator scene
+     * @param event: 'Calculate BMI button' switches scene to the BMI calculator.
+     */
     @FXML
-    void calculateBMI(ActionEvent event) {
+    void getBMI(ActionEvent event) {
+    	//main scene
+    	Scene workoutSelection = applicationStage.getScene();
+    	
     	System.out.println("Scene Change to BMI CALCULATOR");
     	
-    	HBox bmiContainer = new HBox();
+    	//creating new scene containers
+    	VBox bmiContainer = new VBox();
+    	HBox rowContainer = new HBox();
+    	
+    	//creating new scene controls/widgets
     	Label weightLabel = new Label("Enter your body weight");
     	TextField weightTextField = new TextField();
     	Label heightlabel = new Label("Enter your height");
     	TextField heightTextField = new TextField();
     	
+    	//calculate bmi button (SHOULD CALCULATE THE BMI AND SHOW IT ON SCREEN)
     	Button calcualteBMIButton = new Button("Calculate BMI!");
     	calcualteBMIButton.setOnAction(doneEvent -> System.out.println("calculate button pressed"));
     	
-    	bmiContainer.getChildren().addAll(weightLabel,weightTextField,heightlabel,heightTextField,calcualteBMIButton);
+    	rowContainer.getChildren().addAll(weightLabel,weightTextField,heightlabel,heightTextField,calcualteBMIButton);
     	
-    	Scene calculateBMI = new Scene(bmiContainer);
-    	applicationStage.setScene(calculateBMI);
+    	// change unit button (CHANGE SCENE TO A NEW SCENE WHERE THE CALCULATIONS WILL BE DONE IN IMPERIAL)
+    	Button changeUnitButton = new Button("Change unit to imperial.");
+    	changeUnitButton.setOnAction(doneEvent -> System.out.println("unit button pressed"));
+    	
+    	Button exitBMIScreen = new Button("Exit to main menu.");
+    	exitBMIScreen.setOnAction(exitEvent -> exitWorkout(workoutSelection));
+    	
+    	
+    	bmiContainer.getChildren().addAll(rowContainer,changeUnitButton,exitBMIScreen);	
+    	
+    	Scene getBMI = new Scene(bmiContainer);
+    	applicationStage.setScene(getBMI);
+    	
+    	
+    	
     }
     
 

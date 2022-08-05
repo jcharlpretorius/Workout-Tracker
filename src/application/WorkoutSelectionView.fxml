@@ -45,7 +45,7 @@
             <Button mnemonicParsing="false" onAction="#getExercises" text="Select Exercises" />
          </children>
       </HBox>
-      <Button alignment="CENTER" mnemonicParsing="false" onAction="#calculateBMI" prefWidth="274.0" text="Calculate BMI">
+      <Button alignment="CENTER" mnemonicParsing="false" onAction="#getBMI" prefWidth="274.0" text="Calculate BMI">
          <VBox.margin>
             <Insets right="200.0" />
          </VBox.margin>
