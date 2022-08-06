@@ -15,8 +15,6 @@ import java.util.Set;
  *
  */
 public class Workout {
-//	private ArrayList<ArrayList<StrengthExercise>> allExercises;
-//	private ArrayList<ExerciseSets> allExercises;
 	private HashMap<Integer, ExerciseSets> allExercises;
 	private HashMap<String, StrengthExercise> bestSets;
 	private int totalWeightLifted;

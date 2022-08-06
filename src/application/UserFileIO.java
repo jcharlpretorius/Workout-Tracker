@@ -127,6 +127,7 @@ public class UserFileIO {
 	 */
 	public void parseUserInfoArray(ArrayList<String> array) throws NumberFormatException{ // I don't think this needs to throw FileNotFoundException or IOException
 		// Use the data stored in the ArrayList to set the properties of the user object
+		System.out.println(array);
 		ArrayList<String> exerciseChoicesList = exerciseChoices.getExerciseList(); 
 		ArrayList<String[]> personalRecordsList = new ArrayList<String[]>();// do you need to set the size of the String array here?
 		try {
@@ -150,7 +151,7 @@ public class UserFileIO {
 				} else if (i == dateIndex) {
 					user.setDate(stringToDate(line));
 					
-				}else if (i >= recordsStartIndex && i < recordsEndIndex) { // Make sure to check that your comparators are correct. Can probably remove the second conditional?
+				}else if (i >= recordsStartIndex && i <= recordsEndIndex) { 
 					// split line into two strings containing exercise name and pr weight and add to array
 					String[] pr = array.get(i).split(",");  
 					personalRecordsList.add(pr);

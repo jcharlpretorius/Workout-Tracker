@@ -54,6 +54,7 @@ public class WorkoutSelectionViewController {
     	
     	// Add a label to display any error messages
     	Label setsErrorLabel = new Label("");
+    	setsErrorLabel.setPrefHeight(35);
     	
     	// call helper function to build rows for choosing the exercises and numbers of sets
     	exerciseChoiceContent(allContents, setsErrorLabel);
@@ -154,6 +155,7 @@ public class WorkoutSelectionViewController {
      */
     void getRepsAndWeight(Scene exerciseSelectionScene, ExerciseSets exercise) {
     	VBox allRows = new VBox();
+//    	allRows.setPadding(new Insets(20, 20, 20, 20));
 //    	Inset labelMargins = new Insets(20, 20, 20, 20)); // if insets are reused the could be made variables
     	// values refer to: (top, right, bottom, left)
     	allRows.setPadding(new Insets(20, 20, 20, 20));
@@ -167,6 +169,12 @@ public class WorkoutSelectionViewController {
     	Label repsAndWeightHeaderLabel = new Label("\t     Reps \t\t   Weight (lbs)"); // maybe split these titles and add separately to a HBox?
     	allRows.getChildren().addAll(exerciseNameLabel, repsAndWeightHeaderLabel);
     	
+    	// Create an error label
+    	Label repsAndWeightErrorLabel = new Label("");
+    	repsAndWeightErrorLabel.setTextFill(Color.RED);
+    	repsAndWeightErrorLabel.setPrefHeight(35);
+//    	VBox.setMargin(repsAndWeightErrorLabel, new Insets(0, 0, 0, 20));
+    	
     	//
     	ArrayList<TextField> repsTextFields = new ArrayList<TextField>();
     	ArrayList<TextField> weightTextFields = new ArrayList<TextField>();
@@ -174,8 +182,8 @@ public class WorkoutSelectionViewController {
 
     	// Done button calls storeSets function to store the values in the text fields
     	Button doneButton = new Button("Done");
-    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields));
-    	allRows.getChildren().add(doneButton);
+    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields, repsAndWeightErrorLabel));
+    	allRows.getChildren().addAll(doneButton, repsAndWeightErrorLabel);
     	
     	// Finally, change to the scene created above
     	Scene repsAndWeights = new Scene(allRows);
@@ -198,7 +206,7 @@ public class WorkoutSelectionViewController {
     	while(rowCounter < exercise.getNumberOfSets()) {
     		HBox setsRow = new HBox();
     		setsRow.setSpacing(10.0);
-    		HBox.setMargin(setsRow, new Insets(10, 10, 5, 10));
+//    		HBox.setMargin(setsRow, new Insets(10, 10, 5, 10)); // I don't think this does anything
     		
     		Label setLabel = new Label("Set " + (rowCounter + 1)); 
     		
@@ -238,26 +246,49 @@ public class WorkoutSelectionViewController {
      * @param repsTextFields An ArrayList of TextFields that contains user input integers for the number of repetitions
      * @param weightTextFields An ArrayList of TextFields that contains user input integers for the weight lifted in lbs
      */
-    void storeSets(Scene exerciseSelectionScene, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
+    void storeSets(Scene exerciseSelectionScene, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields, Label errorLabel) {
     	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
 
     	// create StrengthExercise objects from ArrayLists of TextField inputs and add them to an ArrayList in the ExerciseSets object
     	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
+		boolean noErrors = true;
+		// loop through each set
     	for (int i = 0; i < repsTextFields.size(); i++) {
-//    		 pass the textFields into constructors for SE, parse them there and validate input
-    		int reps = Integer.parseInt(repsTextFields.get(i).getText());
-    		int weight = Integer.parseInt(weightTextFields.get(i).getText());
-    		StrengthExercise se = new StrengthExercise(exercise.getExerciseName(), reps, weight);
-    		exercisesDone.add(se);
+    		String reps = repsTextFields.get(i).getText();
+    		String weight = weightTextFields.get(i).getText();
+    		// try to make a new StrengthExercise object with the TextField values
+    		try {
+    			StrengthExercise se = new StrengthExercise(exercise.getExerciseName(), reps, weight);
+        		exercisesDone.add(se);
+        		// clear error message 
+//        		errorLabel.setText("");	
+//        		System.out.println("Set " + i + " added to list");
+    		} catch (NumberFormatException nfe) {
+    			// Set error message
+        		errorLabel.setText(nfe.getMessage());
+        		noErrors = false;
+//        		System.out.println("Set " + i + " not added to list: " + nfe.getMessage());
+    		} catch (InvalidRepetitionsException ire) {
+    			// do something
+    			errorLabel.setText(ire.getMessage());
+        		noErrors = false;
+    		} catch (InvalidWeightException iwe) {
+    			// do something
+    			errorLabel.setText(iwe.getMessage());
+        		noErrors = false;
+    		}
     	}
-    	
-    	// Store the ArrayList of StrengthExercises in the ExerciseSets object and add that to the workout  
-    	exercise.setAllSets(exercisesDone);
-    	workout.setAllExercises(exercise);
+    	if (noErrors) {
+    		System.out.println(exercisesDone);
+    		// Store the ArrayList of StrengthExercises in the ExerciseSets object and add that to the workout  
+        	exercise.setAllSets(exercisesDone);
+        	workout.setAllExercises(exercise);
 
-    	// Change the scene back to the exercise selection scene
-    	applicationStage.setScene(exerciseSelectionScene);
-    }
+        	// Change the scene back to the exercise selection scene
+        	applicationStage.setScene(exerciseSelectionScene);
+        }
+    }	
+    	
 
 
     /**

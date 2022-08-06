@@ -18,16 +18,12 @@ public class ExerciseSets {
 	private int exerciseNumber; 
 	private int maxSets;
 	
-//	public ExerciseSets(String exerciseName, int numberOfSets, int exerciseNumber) {
-//		this.exerciseName = new String(exerciseName);
-//		this.numberOfSets = numberOfSets;
-//		this.exerciseNumber = exerciseNumber; 
-//	}
-	public ExerciseSets(String exerciseName, String numberOfSets, int exerciseNumber) {
+	
+	public ExerciseSets(String exerciseName, String numberOfSets, int exerciseNumber) throws NumberFormatException{
 		this.exerciseName = new String(exerciseName);
 		this.exerciseNumber = exerciseNumber; 
 		// variable for the maximum number of sets allowed for each exercises so that the window doesn't get too big
-		this.maxSets = 20; 
+		maxSets = 20; 
 		String errorMessage = "";
 		try {
 			this.numberOfSets = Integer.parseInt(numberOfSets);
@@ -41,10 +37,10 @@ public class ExerciseSets {
 			if (numberOfSets == null) {
 				errorMessage = "Enter a value for the number of sets.";
 			} else {
-				// check is user entered a valid numerical input for the number of sets
+				// check is user entered an invalid numerical input for the number of sets
 				for (char c : numberOfSets.toCharArray()) {
 					if (!Character.isDigit(c)) {
-						errorMessage = "Number of sets should be a positive integer.";
+						errorMessage = "Don't include the character: " + c + "\nNumber of sets should be a positive integer.";
 					}
 				}
 			}
