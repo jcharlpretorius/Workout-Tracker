@@ -35,6 +35,7 @@ public class WorkoutSelectionViewController {
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
 
+    
     @FXML
    /**
     * Creates a scene based on the number of exercises selected in the workout selection scene
@@ -43,20 +44,45 @@ public class WorkoutSelectionViewController {
     */
     void getExercises(ActionEvent event) {
     	Scene workoutSelection = applicationStage.getScene();
+    	
     	VBox contents = new VBox();
     	contents.setPadding(new Insets(20, 20, 20, 20));
-//    	ArrayList<TextField> setsTextFields = new ArrayList<TextField>(); unused
-    	
-    	// Change this to use separate labels instead of tabs to adjust layout
+
     	Label exerciseChoiceLabel = new Label("Exercise \t\t\t\t Number of Sets"); 
     	contents.getChildren().add(exerciseChoiceLabel);
     	
-    	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
+    	// call helper function to build rows for choosing the exercises and numbers of sets
+    	exerciseChoiceContainer(contents);
+
+    	HBox buttonBox = new HBox();
     	
-    	// initializes the size of the allExercises ArrayList ---------------- I don't think this works anymore
-//    	workout.setNumberOfExercises(numberOfExercises);
+    	// Add a Button to finish the workout and switch to workout summary window
+    	Button finishWorkoutButton = new Button("Finish Workout");
+    	finishWorkoutButton.setOnAction(doneEvent -> finishWorkout());
     	
+    	// Add a Button to switch back to the workout selection window. 
+    	Button exitWorkout = new Button("Exit Workout");
+    	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
+    	buttonBox.getChildren().addAll(exitWorkout, finishWorkoutButton);
+    	contents.getChildren().add(buttonBox);
+    	
+    	// create and set the new scene 
+    	Scene exerciseSelectionScene = new Scene(contents);
+    	applicationStage.setScene(exerciseSelectionScene);
+    	
+    }
+    
+    
+    /**
+     * A helper method for the getExercises method. This method adds a number of rows depending 
+     * on the number of exercises selected on the workout selection scene. Each row
+     * contains a ChoiceBox for the type of exercise, a TextField to enter the number of
+     * sets the user wants to do, and a button to start the exercise 
+     * @param contents the VBox container that holds the entire contents of the scene
+     */
+    private void exerciseChoiceContainer(VBox contents) {
     	// A loop for creating elements of the scene for getting the exercise choices and number of sets desired
+    	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
     	int rowCounter = 0;
     	while(rowCounter < numberOfExercises) {
     		HBox exerciseRow = new HBox();
@@ -71,6 +97,7 @@ public class WorkoutSelectionViewController {
     		
     		// creates the text field for the user to input the number of sets
     		TextField numberOfSetsTextfield = new TextField(); 
+    		numberOfSetsTextfield.setPromptText("# of sets");
     		numberOfSetsTextfield.setPrefWidth(80);
     		numberOfSetsTextfield.setAlignment(Pos.CENTER);
 //    		setsTextFields.add(numberOfSetsTextfield); unused
@@ -90,34 +117,20 @@ public class WorkoutSelectionViewController {
     		contents.getChildren().add(exerciseRow);
     		rowCounter++;
     	}
-    	
-    	HBox buttonBox = new HBox();
-    	
-    	// Button calls finishWorkout function to do calculations and switch to workout summary window
-    	Button finishWorkoutButton = new Button("Finish Workout");
-    	finishWorkoutButton.setOnAction(doneEvent -> finishWorkout());
-    	
-    	// Button to switch back to the workout selection window. 
-    	Button exitWorkout = new Button("Exit Workout");
-    	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
-    	buttonBox.getChildren().addAll(exitWorkout, finishWorkoutButton);
-    	contents.getChildren().add(buttonBox);
-    	
-    	// create and set the new scene 
-    	Scene exerciseSelectionScene = new Scene(contents);
-    	applicationStage.setScene(exerciseSelectionScene);
-    	
     }
+    
     
     /**
      * Exit the workout and switch the scene back to the workout selection scene
+     * and clear any saved workout data
      * @param workoutSelectionScene a scene that holds the previous scene 
      * (the workout selection scene) so that the scene can be switched back to that scene
      */
     private void exitWorkout(Scene workoutSelectionScene) {
-    	// change scene back to work out selection scene
     	applicationStage.setScene(workoutSelectionScene);
+    	workout = new Workout();
     }
+    
     
     /**
      * Creates and changes to a Scene to get the user's input for the number of repetitions
@@ -140,19 +153,42 @@ public class WorkoutSelectionViewController {
     	exerciseNameLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 24));
     	
     	// Create labels to go above the text fields
-    	Label repsAndWeightHeaderLabel = new Label("\t\tReps \t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
+    	Label repsAndWeightHeaderLabel = new Label("\t     Reps \t\t   Weight (lbs)"); // maybe split these titles and add separately to a HBox?
     	allRows.getChildren().addAll(exerciseNameLabel, repsAndWeightHeaderLabel);
     	
     	ArrayList<TextField> repsTextFields = new ArrayList<TextField>();
     	ArrayList<TextField> weightTextFields = new ArrayList<TextField>();
+    	repsAndWeightContainer(allRows, exercise, repsTextFields, weightTextFields);
 
+    	// Done button calls storeSets function to store the values in the text fields
+    	Button doneButton = new Button("Done");
+    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields));
+    	allRows.getChildren().add(doneButton);
+    	
+    	// Finally, change to the scene created above
+    	Scene repsAndWeights = new Scene(allRows);
+    	applicationStage.setScene(repsAndWeights);
+    }
+    
+    
+    /**
+     * A helper method for the getRepsAndWeight method. This method adds a number of rows depending
+     * on the number of sets the user entered on the exercise selection scene. Each row contains two
+     * TextFields, one for the number of repetitions performed and the other for the weight lifted.
+     * @param allRows the VBox container that holds the entire contents of the repetitions & weights scene
+     * @param exercise the exercise set object, used in this method for its value of the number of sets 
+     * @param repsTextFields a list of TextFields that holds the user input for the number of repetitions
+     * @param weightTextFields a list of TextFields that holds the user input for the weight lifted in lbs
+     */
+    private void repsAndWeightContainer(VBox allRows, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
+    	
     	int rowCounter = 0;
     	while(rowCounter < exercise.getNumberOfSets()) {
     		HBox setsRow = new HBox();
     		setsRow.setSpacing(10.0);
     		HBox.setMargin(setsRow, new Insets(10, 10, 5, 10));
     		
-    		Label setLabel = new Label("Set " + (rowCounter + 1)); // how to prevent row from shifting to the right when set# is > 1 digit?
+    		Label setLabel = new Label("Set " + (rowCounter + 1)); 
     		
     		// Create text field for the number of repetitions
     		TextField reps = new TextField();
@@ -178,15 +214,6 @@ public class WorkoutSelectionViewController {
     		allRows.getChildren().add(setsRow);
     		rowCounter++;
     	}
-
-    	// Done button calls storeSets function to store the values in the text fields
-    	Button doneButton = new Button("Done");
-    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields));
-    	allRows.getChildren().add(doneButton);
-    	
-    	// Finally, change to the scene created above
-    	Scene repsAndWeights = new Scene(allRows);
-    	applicationStage.setScene(repsAndWeights);
     }
     
     /**
