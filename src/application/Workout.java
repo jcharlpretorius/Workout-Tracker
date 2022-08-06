@@ -2,6 +2,7 @@ package application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 
 /**
@@ -14,30 +15,41 @@ import java.util.HashMap;
  *
  */
 public class Workout {
-	private ArrayList<ArrayList<StrengthExercise>> allExercises;
+//	private ArrayList<ArrayList<StrengthExercise>> allExercises;
+//	private ArrayList<ExerciseSets> allExercises;
+	private HashMap<Integer, ExerciseSets> allExercises;
 	private HashMap<String, StrengthExercise> bestSets;
 	private int totalWeightLifted;
 	
 	public Workout() {
+		allExercises = new HashMap<Integer, ExerciseSets>();
 	}
 
-	public void setAllExercises(int exerciseNumber, ArrayList<StrengthExercise> exercisesDone) {
-		// add ArrayList of StrengthExercises (represents sets) to the allExercises ArrayList
-		int index = exerciseNumber - 1;
+	/**
+	 * 
+	 * @param exerciseSets
+	 */
+	public void setAllExercises(ExerciseSets exerciseSets) {
+		// add ArrayList of StrengthExercises (represents sets) to the allExercises HashMap
+		int exerciseNumber = exerciseSets.getExerciseNumber();
+		// Makes sure you don't call .containsKey() on empty HashMap
 		if (!this.getAllExercises().isEmpty()) {
-			if (this.getAllExercises().size() > index) {
-				// remove set if already added to prevent adding another set when re-entering the set window
-				this.allExercises.remove(index);
-				this.allExercises.add(index, exercisesDone);
+			if (allExercises.containsKey(exerciseNumber)) { 
+				// replace set if already added to prevent adding another set when re-entering the set window
+				allExercises.replace(exerciseNumber, exerciseSets);
+			} else {
+				allExercises.put(exerciseNumber, exerciseSets);
 			}
-			this.allExercises.add(index, exercisesDone);
 		} else {
-			this.allExercises.add(exercisesDone);
-
+			allExercises.put(exerciseNumber, exerciseSets);
 		}
 	}
 		
-	public ArrayList<ArrayList<StrengthExercise>> getAllExercises() {
+	/**
+	 * 
+	 * @return
+	 */
+	public HashMap<Integer, ExerciseSets> getAllExercises() { // Do I even use this method? does it need privacy plug?
 		return this.allExercises;
 	}
 	
@@ -45,10 +57,15 @@ public class Workout {
 		// iterate through the allExercises ArrayList and add up all lifts (repetitions multiplied by weight)
 		int totalWeightLifted = 0;
 		if (!allExercises.isEmpty()) {
-			for (ArrayList<StrengthExercise> set : allExercises) {
+			// loop through the allExercises HashMap
+			Set<Integer> exerciseNumbers = allExercises.keySet();
+			for (Integer exerciseNumber : exerciseNumbers) {
 				int weightLiftedPerSet = 0;
-				for (StrengthExercise ex : set) {
-					weightLiftedPerSet += ex.getReps() * ex.getWeight();
+				ArrayList<StrengthExercise> set = allExercises.get(exerciseNumber).getAllSets();
+				// loop through the ArrayList of Strength exercises 
+				for (StrengthExercise exercise : set) {
+					// multiply the reps and the weight and add to the total
+					weightLiftedPerSet += exercise.getReps() * exercise.getWeight();
 				}
 				totalWeightLifted += weightLiftedPerSet;
 			}
@@ -59,35 +76,57 @@ public class Workout {
 	public int getTotalWeightLifted() {
 		return this.totalWeightLifted;
 	}
-	
+
+	/**
+	 * 
+	 */
 	public void setBestSets() {
 		HashMap<String, StrengthExercise> allBestSets = new HashMap<String, StrengthExercise>();
 		if (!this.allExercises.isEmpty()) {
-			for (int i = 0; i < allExercises.size(); i++) {
-				String exerciseName = allExercises.get(i).get(0).getName();
-					if (allBestSets.containsKey(exerciseName)) {
-						StrengthExercise heaviestSet = allBestSets.get(exerciseName);
-						heaviestSet = getHeaviestSet(heaviestSet, i);
-						allBestSets.replace(exerciseName, heaviestSet);
-					} else {
-						StrengthExercise heaviestSet = allExercises.get(i).get(0);
-						heaviestSet = getHeaviestSet(heaviestSet, i);
-						allBestSets.put(exerciseName, heaviestSet);
-					}
+			Set<Integer> exerciseNumbers = allExercises.keySet();
+			for (Integer exerciseNumber : exerciseNumbers) {
+				String exerciseName = allExercises.get(exerciseNumber).getExerciseName();
+				// check if an earlier exercises is the same as the current one and already in the bests sets HashMap
+				if (allBestSets.containsKey(exerciseName)) {
+					StrengthExercise heaviestSet = allBestSets.get(exerciseName);
+					heaviestSet = getHeaviestSet(heaviestSet, exerciseNumber);
+					allBestSets.replace(exerciseName, heaviestSet);
+				} else {
+
+					// if the exercise hasn't been done in an earlier set, set the heaviest set to the first set
+					StrengthExercise heaviestSet = allExercises.get(exerciseNumber).getAllSets().get(0);
+					heaviestSet = getHeaviestSet(heaviestSet, exerciseNumber);
+					allBestSets.put(exerciseName, heaviestSet);
+				}
 			}
 		}
 		this.bestSets = allBestSets;
+//		// print statements for debugging:
+//		Set<Integer> exerciseNumbers = allExercises.keySet();
+//		for (Integer exerciseNumber : exerciseNumbers) {
+//			ArrayList<StrengthExercise> list = getAllExercises().get(exerciseNumber).getAllSets();
+//			for (StrengthExercise ex : list) {
+//				System.out.println(ex);
+//			}
+//		}
+
 	}
 	
 	public HashMap<String, StrengthExercise> getBestSets() {
-		return this.bestSets;
+		return this.bestSets; // could be plugged, used in the 
 	}
 	
+	/**
+	 * 
+	 * @param bestSet
+	 * @param index
+	 * @return
+	 */
 	public StrengthExercise getHeaviestSet(StrengthExercise bestSet, int index) {
 		int heaviestWeight = bestSet.getWeight();
 		// loop through ArrayList of StrengthExercise objects and return the exercise with the largest weight value 
-		for (int j = 1; j < allExercises.get(index).size(); j++) {
-			StrengthExercise ex = allExercises.get(index).get(j); 
+		for (int j = 1; j < allExercises.get(index).getAllSets().size(); j++) {
+			StrengthExercise ex = allExercises.get(index).getAllSets().get(j); 
 			if (ex.getWeight() > heaviestWeight) {
 				heaviestWeight = ex.getWeight();
 				bestSet = ex;
@@ -100,26 +139,23 @@ public class Workout {
 		return bestSet;
 	}
 	
+	/**
+	 * 
+	 */
 	public String toString() {
 		String output = "";
 		if (!this.allExercises.isEmpty()) {
 			for (int i = 0; i < this.allExercises.size(); i++) {
 				String str = "";
-				for (int j = 0; j < this.allExercises.get(i).size(); j++) {
-					str += "Exercise number: " + i + ", " + this.allExercises.get(i).get(j).toString() + "\n";
+				for (int j = 0; j < this.allExercises.get(i).getAllSets().size(); j++) {
+					str += "Exercise number: " + i + ", " + this.allExercises.get(i).getAllSets().get(j).toString() + "\n";
 				}
 				output += str;
 			}
 		} 
 		return output;
 	}
-	
-	public void setNumberOfExercises(int numExercises) {
-		// Uses the number of exercises to initialize the allExercises ArrayList size
-		if (this.allExercises == null) {
-			this.allExercises = new ArrayList<ArrayList<StrengthExercise>>(numExercises);
-		}
-	}
+
 	
 	/**
 	 * Compares the HashMaps of personal bests with the workout's best sets and 

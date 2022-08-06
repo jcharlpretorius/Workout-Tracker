@@ -45,8 +45,7 @@ public class WorkoutSelectionViewController {
     	Scene workoutSelection = applicationStage.getScene();
     	VBox contents = new VBox();
     	contents.setPadding(new Insets(20, 20, 20, 20));
-//    	ArrayList<String> chosenExercises = new ArrayList<String>(); // unused ArrayList
-    	ArrayList<TextField> setsTextFields = new ArrayList<TextField>();
+//    	ArrayList<TextField> setsTextFields = new ArrayList<TextField>(); unused
     	
     	// Change this to use separate labels instead of tabs to adjust layout
     	Label exerciseChoiceLabel = new Label("Exercise \t\t\t\t Number of Sets"); 
@@ -54,8 +53,8 @@ public class WorkoutSelectionViewController {
     	
     	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
     	
-    	// initializes the size of the allExercises ArrayList
-    	workout.setNumberOfExercises(numberOfExercises);
+    	// initializes the size of the allExercises ArrayList ---------------- I don't think this works anymore
+//    	workout.setNumberOfExercises(numberOfExercises);
     	
     	// A loop for creating elements of the scene for getting the exercise choices and number of sets desired
     	int rowCounter = 0;
@@ -74,7 +73,7 @@ public class WorkoutSelectionViewController {
     		TextField numberOfSetsTextfield = new TextField(); 
     		numberOfSetsTextfield.setPrefWidth(80);
     		numberOfSetsTextfield.setAlignment(Pos.CENTER);
-    		setsTextFields.add(numberOfSetsTextfield); 
+//    		setsTextFields.add(numberOfSetsTextfield); unused
     		
     		Button startExercise = new Button("Start Exercise");
     		int exerciseNumber = rowCounter + 1;
@@ -179,10 +178,9 @@ public class WorkoutSelectionViewController {
     		allRows.getChildren().add(setsRow);
     		rowCounter++;
     	}
-    	
-    	Button doneButton = new Button("Done");
-    	
+
     	// Done button calls storeSets function to store the values in the text fields
+    	Button doneButton = new Button("Done");
     	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields));
     	allRows.getChildren().add(doneButton);
     	
@@ -203,8 +201,10 @@ public class WorkoutSelectionViewController {
      */
     void storeSets(Scene exerciseSelectionScene, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
     	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
-   
-    	// create StrengthExercise objects from ArrayLists of TextField inputs and add them to the ArrayList of all exercises 
+    	
+
+//    	// create StrengthExercise objects from ArrayLists of TextField inputs and add them to the ArrayList of all exercises 
+    	// create StrengthExercise objects from ArrayLists of TextField inputs and add them to an ArrayList in the ExerciseSets object
     	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
     	for (int i = 0; i < repsTextFields.size(); i++) {
     		int reps = Integer.parseInt(repsTextFields.get(i).getText());
@@ -213,8 +213,13 @@ public class WorkoutSelectionViewController {
     		exercisesDone.add(se);
     	}
     	
+    	// Store the ArrayList of StrengthExercises in the ExerciseSets object and add that to the workout  
+    	exercise.setAllSets(exercisesDone);
+    	workout.setAllExercises(exercise);
+ 
+    	
     	// Add the Arraylist of exercises to ArrayList for all the exercises done in the workout
-    	workout.setAllExercises(exercise.getExerciseNumber(), exercisesDone);
+//    	workout.setAllExercises(exercise.getExerciseNumber(), exercisesDone);
     	
     	// Change the scene back to the exercise selection scene
     	applicationStage.setScene(exerciseSelectionScene);
