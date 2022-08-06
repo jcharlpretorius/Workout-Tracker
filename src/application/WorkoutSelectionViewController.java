@@ -219,97 +219,7 @@ public class WorkoutSelectionViewController {
     	// Change the scene back to the exercise selection scene
     	applicationStage.setScene(exerciseSelectionScene);
     }
-    
-    double calculatedBMI = 0;
-    boolean isMetric = true;
-    Label calculatedBMILabel = new Label();
-	
-    void calculateBMI(TextField weightTextField, TextField heightTextField, boolean isMetric) {
-    	
-    	double weight = Double.parseDouble(weightTextField.getText());
-    	double height = Double.parseDouble(heightTextField.getText());
-    	
-    	if (isMetric) {
-    		calculatedBMI = weight/(height*height);
-    		System.out.println(weight);
-    		System.out.println(height);
-    		System.out.println(calculatedBMI);
-    	}else {
-    		calculatedBMI = (weight*703)/(height*height);
-    		System.out.println(calculatedBMI);
-    	}
-    	
-    	calculatedBMILabel.setText("Your BMI is: " + String.valueOf(calculatedBMI));
-    	
-    }
-    
-    /**
-     * Gets to BMI calculator scene
-     * @param event: 'Calculate BMI button' switches scene to the BMI calculator.
-     */
-    @FXML
-    void getBMI(ActionEvent event) {
-    	//main scene (workout selection aka the first scene when main is run)
-    	Scene workoutSelection = applicationStage.getScene();
-    	
-    	System.out.println("Scene Change to BMI CALCULATOR");
-    	
-    	//creating new scene containers
-    	VBox bmiContainer = new VBox();
-    	HBox rowContainer = new HBox();
-    	
-    	
-    	//creating new scene controls/widgets
-    	Label weightLabel = new Label("Enter your body weight");
-    	TextField weightTextField = new TextField();
-    	Label heightlabel = new Label("Enter your height");
-    	TextField heightTextField = new TextField();
-    	
-    	// change unit button (CHANGE SCENE TO A NEW SCENE WHERE THE CALCULATIONS WILL BE DONE IN IMPERIAL)
-    	
-    	
-    	ToggleButton changeUnitButton = new ToggleButton("Change unit to imperial.");
-  
-    	//changeUnitButton.setSelected(true);
-    	
-    	changeUnitButton.setOnAction(changeUnitEvent -> {
-    		
-    		if (changeUnitButton.isSelected()) {
-        		changeUnitButton.setText("Change unit to metric.");
-        		isMetric = false;
-        	}else {
-        		changeUnitButton.setText("Change unit to imperial.");
-        		isMetric = true;
-        	}
-    		
-    	});
-    	
-    	
-    	calculatedBMILabel.setText("Your BMI is: ");
-    	//calculate bmi button (SHOULD CALCULATE THE BMI AND SHOW IT ON SCREEN)
-    	Button calcualteBMIButton = new Button("Calculate BMI!");
-    	calcualteBMIButton.setOnAction(doneEvent -> calculateBMI(weightTextField,heightTextField,isMetric));
-    	
-    	rowContainer.getChildren().addAll(weightLabel,weightTextField,heightlabel,heightTextField,calcualteBMIButton);
-    	
-    	
-    	
-    	Button exitBMIScreen = new Button("Exit to main menu.");
-    	exitBMIScreen.setOnAction(exitEvent -> exitWorkout(workoutSelection));
-    	
-    	
-    	bmiContainer.getChildren().addAll(rowContainer,changeUnitButton,exitBMIScreen,calculatedBMILabel);	
-    	
-    	
-    	Scene getBMI = new Scene(bmiContainer);
-    	applicationStage.setScene(getBMI);
-    	
-    	
-    	
-    }
-    
-	
-    
+
 
     /**
      * Creates and switch to a scene for the workout summary and displays important information about workout
@@ -408,18 +318,19 @@ public class WorkoutSelectionViewController {
      * @param num an integer to get the suffix for
      * @return a 2 character string, either "st", "nd", "rd", or "th"
      */
-    public static String getOrdinalSuffix(int num) {
-    	int i = num % 10;
-    	int j = num % 100;
-    	if (i == 1 && j != 11 && j != 111 && j != 1111) {
+    public String getOrdinalSuffix(int number) {
+    	int lastDigit = number % 10;
+    	int secondLastDigit = number % 100;
+    	if (lastDigit == 1 && secondLastDigit != 11) {
     		return "st";
     	}
-    	if (i == 2 && j != 12 && j != 112 && j != 1112) {
+    	if (lastDigit == 2 && secondLastDigit != 12) {
     		return "nd";
     	}
-    	if (i == 3 && j != 13 && j != 113 && j != 1113) {
+    	if (lastDigit == 3 && secondLastDigit != 13) {
     		return "rd";
     	}
+    	// return "th" for all other numbers
     	return "th";
 	}
     
