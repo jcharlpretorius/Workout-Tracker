@@ -1,14 +1,15 @@
 James
-45
+51
 170.0
 64.0
 05-02-2022
 Overhead Press,123
 Lateral Raises,1
+Tricep Push-downs,222
 pullups,0
 Bench Press,225
-Dips,37
-Barbell Row,115
+Dips,44
+Barbell Row,222
 Bicep Curl,88
 Pull ups,25
 Dead Lift,345
