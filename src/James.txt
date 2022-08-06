@@ -1,5 +1,5 @@
 James
-51
+53
 170.0
 64.0
 05-02-2022
@@ -13,4 +13,4 @@ Barbell Row,222
 Bicep Curl,88
 Pull ups,25
 Dead Lift,345
-Squat,333
+Squat,11
