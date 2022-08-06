@@ -35,6 +35,7 @@ public class WorkoutSelectionViewController {
     @FXML
     private ChoiceBox<Integer> numberOfExercisesChoiceBox;
 
+    
     @FXML
    /**
     * Creates a scene based on the number of exercises selected in the workout selection scene
@@ -43,21 +44,45 @@ public class WorkoutSelectionViewController {
     */
     void getExercises(ActionEvent event) {
     	Scene workoutSelection = applicationStage.getScene();
-    	VBox contents = new VBox();
-    	contents.setPadding(new Insets(20, 20, 20, 20));
-//    	ArrayList<String> chosenExercises = new ArrayList<String>(); // unused ArrayList
-    	ArrayList<TextField> setsTextFields = new ArrayList<TextField>();
     	
-    	// Change this to use separate labels instead of tabs to adjust layout
+    	VBox allContents = new VBox();
+    	allContents.setPadding(new Insets(20, 20, 20, 20));
+
     	Label exerciseChoiceLabel = new Label("Exercise \t\t\t\t Number of Sets"); 
-    	contents.getChildren().add(exerciseChoiceLabel);
+    	allContents.getChildren().add(exerciseChoiceLabel);
     	
-    	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
+    	// call helper function to build rows for choosing the exercises and numbers of sets
+    	exerciseChoiceContent(allContents);
+
+    	HBox buttonBox = new HBox();
     	
-    	// initializes the size of the allExercises ArrayList
-    	workout.setNumberOfExercises(numberOfExercises);
+    	// Add a Button to finish the workout and switch to workout summary window
+    	Button finishWorkoutButton = new Button("Finish Workout");
+    	finishWorkoutButton.setOnAction(doneEvent -> finishWorkout());
     	
+    	// Add a Button to switch back to the workout selection window. 
+    	Button exitWorkout = new Button("Exit Workout");
+    	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
+    	buttonBox.getChildren().addAll(exitWorkout, finishWorkoutButton);
+    	allContents.getChildren().add(buttonBox);
+    	
+    	// create and set the new scene 
+    	Scene exerciseSelectionScene = new Scene(allContents);
+    	applicationStage.setScene(exerciseSelectionScene);
+    	
+    }
+    
+    
+    /**
+     * A helper method for the getExercises method. This method adds a number of rows depending 
+     * on the number of exercises selected on the workout selection scene. Each row
+     * contains a ChoiceBox for the type of exercise, a TextField to enter the number of
+     * sets the user wants to do, and a button to start the exercise 
+     * @param contents the VBox container that holds the entire contents of the scene
+     */
+    private void exerciseChoiceContent(VBox allContents) {
     	// A loop for creating elements of the scene for getting the exercise choices and number of sets desired
+    	int numberOfExercises = numberOfExercisesChoiceBox.getValue();
     	int rowCounter = 0;
     	while(rowCounter < numberOfExercises) {
     		HBox exerciseRow = new HBox();
@@ -72,9 +97,9 @@ public class WorkoutSelectionViewController {
     		
     		// creates the text field for the user to input the number of sets
     		TextField numberOfSetsTextfield = new TextField(); 
+    		numberOfSetsTextfield.setPromptText("# of sets");
     		numberOfSetsTextfield.setPrefWidth(80);
     		numberOfSetsTextfield.setAlignment(Pos.CENTER);
-    		setsTextFields.add(numberOfSetsTextfield); 
     		
     		Button startExercise = new Button("Start Exercise");
     		int exerciseNumber = rowCounter + 1;
@@ -88,37 +113,23 @@ public class WorkoutSelectionViewController {
     		});
     		
     		exerciseRow.getChildren().addAll(choiceBoxOptions, numberOfSetsTextfield, startExercise);
-    		contents.getChildren().add(exerciseRow);
+    		allContents.getChildren().add(exerciseRow);
     		rowCounter++;
     	}
-    	
-    	HBox buttonBox = new HBox();
-    	
-    	// Button calls finishWorkout function to do calculations and switch to workout summary window
-    	Button finishWorkoutButton = new Button("Finish Workout");
-    	finishWorkoutButton.setOnAction(doneEvent -> finishWorkout());
-    	
-    	// Button to switch back to the workout selection window. 
-    	Button exitWorkout = new Button("Exit Workout");
-    	exitWorkout.setOnAction(exitEvent -> exitWorkout(workoutSelection));
-    	buttonBox.getChildren().addAll(exitWorkout, finishWorkoutButton);
-    	contents.getChildren().add(buttonBox);
-    	
-    	// create and set the new scene 
-    	Scene exerciseSelectionScene = new Scene(contents);
-    	applicationStage.setScene(exerciseSelectionScene);
-    	
     }
+    
     
     /**
      * Exit the workout and switch the scene back to the workout selection scene
+     * and clear any saved workout data
      * @param workoutSelectionScene a scene that holds the previous scene 
      * (the workout selection scene) so that the scene can be switched back to that scene
      */
     private void exitWorkout(Scene workoutSelectionScene) {
-    	// change scene back to work out selection scene
     	applicationStage.setScene(workoutSelectionScene);
+    	workout = new Workout();
     }
+    
     
     /**
      * Creates and changes to a Scene to get the user's input for the number of repetitions
@@ -141,19 +152,42 @@ public class WorkoutSelectionViewController {
     	exerciseNameLabel.setFont(Font.font("System Bold", FontPosture.REGULAR, 24));
     	
     	// Create labels to go above the text fields
-    	Label repsAndWeightHeaderLabel = new Label("\t\tReps \t\t Weight (lbs)"); // maybe split these titles and add separately to a HBox?
+    	Label repsAndWeightHeaderLabel = new Label("\t     Reps \t\t   Weight (lbs)"); // maybe split these titles and add separately to a HBox?
     	allRows.getChildren().addAll(exerciseNameLabel, repsAndWeightHeaderLabel);
     	
     	ArrayList<TextField> repsTextFields = new ArrayList<TextField>();
     	ArrayList<TextField> weightTextFields = new ArrayList<TextField>();
+    	repsAndWeightContent(allRows, exercise, repsTextFields, weightTextFields);
 
+    	// Done button calls storeSets function to store the values in the text fields
+    	Button doneButton = new Button("Done");
+    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields));
+    	allRows.getChildren().add(doneButton);
+    	
+    	// Finally, change to the scene created above
+    	Scene repsAndWeights = new Scene(allRows);
+    	applicationStage.setScene(repsAndWeights);
+    }
+    
+    
+    /**
+     * A helper method for the getRepsAndWeight method. This method adds a number of rows depending
+     * on the number of sets the user entered on the exercise selection scene. Each row contains two
+     * TextFields, one for the number of repetitions performed and the other for the weight lifted.
+     * @param allRows the VBox container that holds the entire contents of the repetitions & weights scene
+     * @param exercise the exercise set object, used in this method for its value of the number of sets 
+     * @param repsTextFields a list of TextFields that holds the user input for the number of repetitions
+     * @param weightTextFields a list of TextFields that holds the user input for the weight lifted in lbs
+     */
+    private void repsAndWeightContent(VBox allRows, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
+    	
     	int rowCounter = 0;
     	while(rowCounter < exercise.getNumberOfSets()) {
     		HBox setsRow = new HBox();
     		setsRow.setSpacing(10.0);
     		HBox.setMargin(setsRow, new Insets(10, 10, 5, 10));
     		
-    		Label setLabel = new Label("Set " + (rowCounter + 1)); // how to prevent row from shifting to the right when set# is > 1 digit?
+    		Label setLabel = new Label("Set " + (rowCounter + 1)); 
     		
     		// Create text field for the number of repetitions
     		TextField reps = new TextField();
@@ -179,16 +213,6 @@ public class WorkoutSelectionViewController {
     		allRows.getChildren().add(setsRow);
     		rowCounter++;
     	}
-    	
-    	Button doneButton = new Button("Done");
-    	
-    	// Done button calls storeSets function to store the values in the text fields
-    	doneButton.setOnAction(doneEvent -> storeSets(exerciseSelectionScene, exercise, repsTextFields, weightTextFields));
-    	allRows.getChildren().add(doneButton);
-    	
-    	// Finally, change to the scene created above
-    	Scene repsAndWeights = new Scene(allRows);
-    	applicationStage.setScene(repsAndWeights);
     }
     
     /**
@@ -203,8 +227,8 @@ public class WorkoutSelectionViewController {
      */
     void storeSets(Scene exerciseSelectionScene, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields) {
     	// method called by getRepsAndWeight to store elements in arrayList and switch back the scene
-   
-    	// create StrengthExercise objects from ArrayLists of TextField inputs and add them to the ArrayList of all exercises 
+
+    	// create StrengthExercise objects from ArrayLists of TextField inputs and add them to an ArrayList in the ExerciseSets object
     	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
     	for (int i = 0; i < repsTextFields.size(); i++) {
     		int reps = Integer.parseInt(repsTextFields.get(i).getText());
@@ -213,103 +237,14 @@ public class WorkoutSelectionViewController {
     		exercisesDone.add(se);
     	}
     	
-    	// Add the Arraylist of exercises to ArrayList for all the exercises done in the workout
-    	workout.setAllExercises(exercise.getExerciseNumber(), exercisesDone);
-    	
+    	// Store the ArrayList of StrengthExercises in the ExerciseSets object and add that to the workout  
+    	exercise.setAllSets(exercisesDone);
+    	workout.setAllExercises(exercise);
+
     	// Change the scene back to the exercise selection scene
     	applicationStage.setScene(exerciseSelectionScene);
     }
-    
-    double calculatedBMI = 0;
-    boolean isMetric = true;
-    Label calculatedBMILabel = new Label();
-	
-    void calculateBMI(TextField weightTextField, TextField heightTextField, boolean isMetric) {
-    	
-    	double weight = Double.parseDouble(weightTextField.getText());
-    	double height = Double.parseDouble(heightTextField.getText());
-    	
-    	if (isMetric) {
-    		calculatedBMI = weight/(height*height);
-    		System.out.println(weight);
-    		System.out.println(height);
-    		System.out.println(calculatedBMI);
-    	}else {
-    		calculatedBMI = (weight*703)/(height*height);
-    		System.out.println(calculatedBMI);
-    	}
-    	
-    	calculatedBMILabel.setText("Your BMI is: " + String.valueOf(calculatedBMI));
-    	
-    }
-    
-    /**
-     * Gets to BMI calculator scene
-     * @param event: 'Calculate BMI button' switches scene to the BMI calculator.
-     */
-    @FXML
-    void getBMI(ActionEvent event) {
-    	//main scene (workout selection aka the first scene when main is run)
-    	Scene workoutSelection = applicationStage.getScene();
-    	
-    	System.out.println("Scene Change to BMI CALCULATOR");
-    	
-    	//creating new scene containers
-    	VBox bmiContainer = new VBox();
-    	HBox rowContainer = new HBox();
-    	
-    	
-    	//creating new scene controls/widgets
-    	Label weightLabel = new Label("Enter your body weight");
-    	TextField weightTextField = new TextField();
-    	Label heightlabel = new Label("Enter your height");
-    	TextField heightTextField = new TextField();
-    	
-    	// change unit button (CHANGE SCENE TO A NEW SCENE WHERE THE CALCULATIONS WILL BE DONE IN IMPERIAL)
-    	
-    	
-    	ToggleButton changeUnitButton = new ToggleButton("Change unit to imperial.");
-  
-    	//changeUnitButton.setSelected(true);
-    	
-    	changeUnitButton.setOnAction(changeUnitEvent -> {
-    		
-    		if (changeUnitButton.isSelected()) {
-        		changeUnitButton.setText("Change unit to metric.");
-        		isMetric = false;
-        	}else {
-        		changeUnitButton.setText("Change unit to imperial.");
-        		isMetric = true;
-        	}
-    		
-    	});
-    	
-    	
-    	calculatedBMILabel.setText("Your BMI is: ");
-    	//calculate bmi button (SHOULD CALCULATE THE BMI AND SHOW IT ON SCREEN)
-    	Button calcualteBMIButton = new Button("Calculate BMI!");
-    	calcualteBMIButton.setOnAction(doneEvent -> calculateBMI(weightTextField,heightTextField,isMetric));
-    	
-    	rowContainer.getChildren().addAll(weightLabel,weightTextField,heightlabel,heightTextField,calcualteBMIButton);
-    	
-    	
-    	
-    	Button exitBMIScreen = new Button("Exit to main menu.");
-    	exitBMIScreen.setOnAction(exitEvent -> exitWorkout(workoutSelection));
-    	
-    	
-    	bmiContainer.getChildren().addAll(rowContainer,changeUnitButton,exitBMIScreen,calculatedBMILabel);	
-    	
-    	
-    	Scene getBMI = new Scene(bmiContainer);
-    	applicationStage.setScene(getBMI);
-    	
-    	
-    	
-    }
-    
-	
-    
+
 
     /**
      * Creates and switch to a scene for the workout summary and displays important information about workout
@@ -324,9 +259,9 @@ public class WorkoutSelectionViewController {
     	ArrayList<String> newPRs = workout.checkPersonalBests(user.getPersonalRecords()); 
     	
     	// create workout summary scene:
-    	VBox summary = new VBox();
-    	summary.setSpacing(10);
-    	summary.setAlignment(Pos.CENTER); 
+    	VBox allSummary = new VBox();
+    	allSummary.setSpacing(10);
+    	allSummary.setAlignment(Pos.CENTER); 
     	Label summaryTitleLabel = new Label("Workout Summary");
 		summaryTitleLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
 
@@ -336,7 +271,40 @@ public class WorkoutSelectionViewController {
 		congratsLabel.setFont(Font.font("System", FontPosture.REGULAR, 16));
 		VBox.setMargin(congratsLabel, new Insets(0, 10, 0, 10));
 		
-    	VBox summaryContent = new VBox();
+		// Call helper function to populate the summary content with total weight lifted, number of PRs, and the best sets
+		VBox summaryContent = new VBox();
+		workoutSummaryContent(summaryContent, newPRs);
+    	allSummary.getChildren().addAll(summaryTitleLabel, congratsLabel, summaryContent);
+    	
+    	// Switch to the workout summary scene
+    	Scene workoutSummary = new Scene(allSummary);
+    	applicationStage.setScene(workoutSummary);
+    	
+    	// Print Statements for testing, remove before submitting final version
+    	System.out.println("Name: " + user.getUserName());
+    	System.out.println("Num workouts Done: " + user.getNumWorkoutsDone());
+    	System.out.println("User height: " + user.getHeight());
+    	System.out.println("User BodyWeight: " + user.getBodyWeight());
+    	System.out.println("Personal Records: " + user.getPersonalRecords());
+
+    	
+    	//write user information to file
+    	try {
+			userFile.writeWorkout(userFileName);
+		} catch (IOException e) {
+			System.out.println("Error: Failed to write to file");
+			e.printStackTrace();
+		}
+    }
+    
+    /**
+     * A helper method for finishWorkout(). This method populates a container with labels to display
+     * important information about the workout, including total weight lifted, the best sets performed,
+     * and the personal records broken (if any).
+     * @param summaryContent the container that is being populated by this method
+     * @param newPRs a list containing the personal records broken during the workout
+     */
+    void workoutSummaryContent(VBox summaryContent, ArrayList<String> newPRs) {
     	VBox.setMargin(summaryContent, new Insets(20, 20, 20, 20));
     	
     	// Create labels for the personal bests, if any have been broken
@@ -356,6 +324,7 @@ public class WorkoutSelectionViewController {
     	Label totalWeightLiftedLabel = new Label("Total weight lifted: " + workout.getTotalWeightLifted() + "lbs");
     	Label bestSetsHeaderLabel = new Label("Best sets: ");
     	bestSetsHeaderLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+    	
     	summaryContent.getChildren().addAll(personRecordsLabel,totalWeightLiftedLabel, bestSetsHeaderLabel);
     	
     	// Create labels for displaying best sets from a list
@@ -375,28 +344,6 @@ public class WorkoutSelectionViewController {
     	for (Label bestSet : bestSetsLabels) {
         	summaryContent.getChildren().add(bestSet);
     	}
-  
-    	summary.getChildren().addAll(summaryTitleLabel, congratsLabel, summaryContent);
-    	
-    	// Switch to the workout summary scene
-    	Scene workoutSummary = new Scene(summary);
-    	applicationStage.setScene(workoutSummary);
-    	
-    	// Print Statements for testing, remove before submitting final version
-    	System.out.println("Name: " + user.getUserName());
-    	System.out.println("Num workouts Done: " + user.getNumWorkoutsDone());
-    	System.out.println("User height: " + user.getHeight());
-    	System.out.println("User BodyWeight: " + user.getBodyWeight());
-    	System.out.println("Personal Records: " + user.getPersonalRecords());
-
-    	
-//    	 write user information to file
-    	try {
-			userFile.writeWorkout(userFileName);
-		} catch (IOException e) {
-			System.out.println("Error: Failed to write to file");
-			e.printStackTrace();
-		}
     }
     
     /**
@@ -408,18 +355,19 @@ public class WorkoutSelectionViewController {
      * @param num an integer to get the suffix for
      * @return a 2 character string, either "st", "nd", "rd", or "th"
      */
-    public static String getOrdinalSuffix(int num) {
-    	int i = num % 10;
-    	int j = num % 100;
-    	if (i == 1 && j != 11 && j != 111 && j != 1111) {
+    public String getOrdinalSuffix(int number) {
+    	int lastDigit = number % 10;
+    	int secondLastDigit = number % 100;
+    	if (lastDigit == 1 && secondLastDigit != 11) {
     		return "st";
     	}
-    	if (i == 2 && j != 12 && j != 112 && j != 1112) {
+    	if (lastDigit == 2 && secondLastDigit != 12) {
     		return "nd";
     	}
-    	if (i == 3 && j != 13 && j != 113 && j != 1113) {
+    	if (lastDigit == 3 && secondLastDigit != 13) {
     		return "rd";
     	}
+    	// return "th" for all other numbers
     	return "th";
 	}
     
