@@ -7,7 +7,8 @@ import javafx.scene.control.TextField;
 /**
  * The ExerciseSets class stores the number of sets, the name of the exercise, 
  * the number of the exercise representing its place in the workout, and 
- * a list of all of the sets done for that exercise
+ * a list of all of the sets done for that exercise. It also holds a variable
+ * for the maximum number of sets allowed.
  * @author JC
  *
  */
@@ -18,13 +19,22 @@ public class ExerciseSets {
 	private int exerciseNumber; 
 	private int maxSets;
 	
-	
+	/**
+	 * Constructs a newly created ExerciseSets object from an exercise name, an exercise number
+	 * and the number of sets
+	 * @param exerciseName the name of the exercise the ExerciseSets contains
+	 * @param numberOfSets the total number of sets
+	 * @param exerciseNumber the number corresponding to the exercise's position in a workout
+	 * @throws NumberFormatException parsing a string to an integer for the number of sets can cause an exception
+	 */
 	public ExerciseSets(String exerciseName, String numberOfSets, int exerciseNumber) throws NumberFormatException{
 		this.exerciseName = new String(exerciseName);
 		this.exerciseNumber = exerciseNumber; 
 		// variable for the maximum number of sets allowed for each exercises so that the window doesn't get too big
 		maxSets = 20; 
 		String errorMessage = "";
+		
+		// Try to parse the String to an integer and use it to initialize the number of sets
 		try {
 			this.numberOfSets = Integer.parseInt(numberOfSets);
 			// check if the user entered a value outside of the allowable range
@@ -48,22 +58,42 @@ public class ExerciseSets {
 		}
 	}
 	
+	/**
+	 * Gets the name of the exercise
+	 * @return the string containing the exercise name 
+	 */
 	public String getExerciseName() {
 		return new String(this.exerciseName);
 	}
 	
+	/**
+	 * Gets the number of sets 
+	 * @return the number of sets
+	 */
 	public int getNumberOfSets() {
 		return this.numberOfSets;
 	}
 	
+	/**
+	 * Gets the exercise number, which represents its position in the workout
+	 * @return the exercise number
+	 */
 	public int getExerciseNumber() {
 		return this.exerciseNumber;
 	}
 
+	/**
+	 * Get the list of all sets in the exercise
+	 * @return the list containing StrengthExerices objects for each set
+	 */
 	ArrayList<StrengthExercise> getAllSets() {
-		return allSets; // do I want this to have privacy leak?
+		return new ArrayList<StrengthExercise>(allSets); 
 	}
-
+	
+	/**
+	 * Sets the list of all exercise sets
+	 * @param allSets the list of StrengthExercise objects to set allSets to
+	 */
 	void setAllSets(ArrayList<StrengthExercise> allSets) {
 		this.allSets = new ArrayList<StrengthExercise>(allSets); 
 	}

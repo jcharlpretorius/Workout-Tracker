@@ -23,7 +23,7 @@ public class StrengthExercise {
 	public StrengthExercise(String exerciseName, String reps, String weight) throws NumberFormatException, InvalidRepetitionsException, InvalidWeightException{
 		this.exerciseName = new String(exerciseName);
 		maxReps = 100;
-		maxWeight = 1500; // maximum allowable weight. Heavier than world record deadlift
+		maxWeight = 2000; // maximum allowable weight. Heavier than humanly possible
 		
 		// parse the repetitions input and handle invalid input
 		try {
@@ -53,8 +53,8 @@ public class StrengthExercise {
 		try {
 			this.weight = Integer.parseInt(weight);
 			// check if the user entered a weight value outside of the allowable range
-			if (this.weight < 1 || this.weight > maxWeight) {
-				throw new InvalidWeightException(String.format("The weight value should be \nbetween 1 and %d", maxWeight));
+			if (this.weight < 0 || this.weight > maxWeight) {
+				throw new InvalidWeightException(String.format("The weight value should be \nbetween 0 and %d", maxWeight));
 			}
 			
 		} catch (NumberFormatException nfe) {
