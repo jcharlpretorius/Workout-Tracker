@@ -20,7 +20,18 @@ public class StrengthExercise {
 	private int maxWeight;
 	
 	
-	public StrengthExercise(String exerciseName, String reps, String weight) throws NumberFormatException, InvalidRepetitionsException, InvalidWeightException{
+	/**
+	 * Constructs the StrengthExercise object from the exercise name, number of repetitions
+	 * and weight lifted. The values for repetitions and weight are converted from strings 
+	 * to integers.  
+	 * @param exerciseName the name of the exercise
+	 * @param reps the number of repetitions
+	 * @param weight the weight moved in the exercise
+	 * @throws NumberFormatException the String parameters for repetions and weight are parsed to integers and can throw this exception
+	 * @throws InvalidRepetitionsException
+	 * @throws InvalidWeightException
+	 */
+	public StrengthExercise(String exerciseName, String reps, String weight) throws InvalidStrengthExerciseException{
 		this.exerciseName = new String(exerciseName);
 		maxReps = 100;
 		maxWeight = 2000; // maximum allowable weight. Heavier than humanly possible
@@ -30,7 +41,7 @@ public class StrengthExercise {
 			this.repetitions = Integer.parseInt(reps);
 			// check if the user entered a repetitions value outside of the allowable range
 			if (this.repetitions < 1 || this.repetitions > maxReps) {
-				throw new InvalidRepetitionsException(String.format("The number of reps should be \nbetween 1 and %d.", maxReps));
+				throw new InvalidStrengthExerciseException(String.format("The number of reps should be \nbetween 1 and %d.", maxReps));
 			}
 			
 		} catch (NumberFormatException nfe) {
@@ -46,7 +57,7 @@ public class StrengthExercise {
 					}
 				}
 			}
-			throw new InvalidRepetitionsException(errorMessage);
+			throw new InvalidStrengthExerciseException(errorMessage);
 		}
 		
 		// parse the weight input and handle invalid input
@@ -54,7 +65,7 @@ public class StrengthExercise {
 			this.weight = Integer.parseInt(weight);
 			// check if the user entered a weight value outside of the allowable range
 			if (this.weight < 0 || this.weight > maxWeight) {
-				throw new InvalidWeightException(String.format("The weight value should be \nbetween 0 and %d", maxWeight));
+				throw new InvalidStrengthExerciseException(String.format("The weight value should be \nbetween 0 and %d", maxWeight));
 			}
 			
 		} catch (NumberFormatException nfe) {
@@ -70,7 +81,7 @@ public class StrengthExercise {
 					}
 				}
 			}
-			throw new InvalidWeightException(errorMessage);
+			throw new InvalidStrengthExerciseException(errorMessage);
 		}
 	}
 	

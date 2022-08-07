@@ -256,17 +256,8 @@ public class WorkoutSelectionViewController {
     		try {
     			StrengthExercise se = new StrengthExercise(exercise.getExerciseName(), reps, weight);
         		exercisesDone.add(se);
-
-    		} catch (NumberFormatException nfe) {
-        		errorLabel.setText(nfe.getMessage());
-        		noErrors = false;
-        		
-    		} catch (InvalidRepetitionsException ire) {
-    			errorLabel.setText(ire.getMessage());
-        		noErrors = false;
-        		
-    		} catch (InvalidWeightException iwe) {
-    			errorLabel.setText(iwe.getMessage());
+    		} catch (InvalidStrengthExerciseException isee) {
+    			errorLabel.setText(isee.getMessage());
         		noErrors = false;
     		}
     	}
@@ -279,9 +270,8 @@ public class WorkoutSelectionViewController {
         	applicationStage.setScene(exerciseSelectionScene);
         }
     }	
-    	
 
-
+    
     /**
      * Creates and switch to a scene for the workout summary and displays important information about workout
      * including the total weight lifted, the number of personal records beaten (if any) and 
