@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import java.lang.Integer?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
@@ -10,18 +16,20 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="workoutSelectionView" alignment="CENTER" prefHeight="200.0" prefWidth="325.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.WorkoutSelectionViewController">
+<VBox fx:id="workoutSelectionView" alignment="CENTER" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.WorkoutSelectionViewController">
    <children>
       <Label alignment="CENTER" text="Workout Builder" textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="20.0" />
          </font>
+         <VBox.margin>
+            <Insets bottom="30.0" />
+         </VBox.margin>
       </Label>
-      <Label text="Strength Workout" />
-      <HBox prefHeight="30.0" prefWidth="300.0" spacing="10.0">
+      <HBox alignment="CENTER" prefHeight="30.0" prefWidth="300.0" spacing="5.0">
          <children>
             <Label prefHeight="17.0" prefWidth="119.0" text="Number of Exercises" />
-            <ChoiceBox fx:id="numberOfExercisesChoiceBox" prefHeight="25.0" prefWidth="54.0">
+            <ChoiceBox fx:id="numberOfExercisesChoiceBox" prefHeight="25.0" prefWidth="70.0">
  				<items>
             		<FXCollections fx:factory="observableArrayList">
             			<Integer fx:value="1" />
