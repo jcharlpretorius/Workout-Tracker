@@ -9,7 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.scene.Parent;
 
-
+/**
+ * This class is the base for the javafx workout application.
+ * It extends the Application class and loads the scene
+ * @author JC
+ *
+ */
 public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
@@ -22,7 +27,7 @@ public class Main extends Application {
 			WorkoutSelectionViewController selectionController = (WorkoutSelectionViewController)loader.getController();
 			selectionController.setApplicationStage(primaryStage);
 			
-			Scene scene = new Scene(root,400,400);
+			Scene scene = new Scene(root,320,200);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Workout Application");
 			primaryStage.show();
@@ -31,7 +36,12 @@ public class Main extends Application {
 		}
 	}
 	
+	/**
+	 * The main method's function is to launch the javafx application
+	 * @param args
+	 */
 	public static void main(String[] args) {
+		// launch the workout application
 		launch(args);
 	}
 }

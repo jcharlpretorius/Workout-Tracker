@@ -29,7 +29,7 @@ public class UserFileIO {
 	private int nameIndex = 0;
 	private int numWorkoutsIndex = 1; 
 	private int userHeightIndex = 2; 
-	private int userWeightsIndex = 3; // Later: CSV bodyweights, should be a method somewhere that adds / updates this
+	private int userWeightIndex = 3; // Later: CSV bodyweights, should be a method somewhere that adds / updates this
 	private int dateIndex = 4; // Later: CSV dates, corresponding to bodyweight for BMI calculation
 	private int recordsStartIndex = 5;	
 	
@@ -41,7 +41,7 @@ public class UserFileIO {
 		user = new UserInfo();
 		exerciseChoices = new ExerciseChoices();
 		try {
-			parseUserInfoArray(readWorkout(fileName));
+			parseUserInfo(readUser(fileName));
 		} catch(NumberFormatException nfe) {
 			System.out.println(nfe.getMessage());
 			nfe.printStackTrace();
@@ -53,10 +53,10 @@ public class UserFileIO {
 		} 
 	}
 	
-	public void setUser(UserInfo user) {
-		this.user = user; 
-	}
-	
+	/**
+	 * Get the user object which has been created from information stored in a file
+	 * @return the reference to the user object
+	 */
 	public UserInfo getUser() {
 		return this.user;
 	}
@@ -68,19 +68,19 @@ public class UserFileIO {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public ArrayList<String>readWorkout(String fileName) throws FileNotFoundException, IOException{
-		// should I make these methods static?
+	public ArrayList<String>readUser(String fileName) throws FileNotFoundException, IOException{
 		BufferedReader reader = new BufferedReader(new FileReader(fileName));
-		ArrayList<String> userInfoArray = new ArrayList<String>();
+		ArrayList<String> userInfoList = new ArrayList<String>();
 		String line = reader.readLine();
 		
+		// Read each line in the file
 		while(line != null) {
-			userInfoArray.add(line);
+			userInfoList.add(line);
 			line = reader.readLine();
 		}
-		reader.close();
 		
-		return userInfoArray;
+		reader.close();
+		return userInfoList;
 	}
 	/**
 	 * Write the user's workout data to a file. Writes over the existing file with information
@@ -89,7 +89,7 @@ public class UserFileIO {
 	 * @param fileName The file name which the method writes to 
 	 * @throws IOException
 	 */
-	public void writeWorkout(String fileName) throws IOException {
+	public void writeUser(String fileName) throws IOException {
 		int endOfFileIndex = recordsStartIndex + exerciseChoices.getExerciseList().size(); 
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 		PrintWriter pWriter = new PrintWriter(writer);
@@ -100,7 +100,7 @@ public class UserFileIO {
 				pWriter.println(user.getNumWorkoutsDone());
 			} else if (i == userHeightIndex) {
 				pWriter.println(user.getHeight());
-			} else if (i == userWeightsIndex) {
+			} else if (i == userWeightIndex) {
 				pWriter.println(user.getBodyWeight());
 			} else if (i == dateIndex) {
 				pWriter.println(dateToString(user.getDate())); 
@@ -125,16 +125,15 @@ public class UserFileIO {
 	 * @param a list containing the lines text read from the text file 
 	 * @throws NumberFormatException 
 	 */
-	public void parseUserInfoArray(ArrayList<String> array) throws NumberFormatException{ // I don't think this needs to throw FileNotFoundException or IOException
+	public void parseUserInfo(ArrayList<String> userInfoList) throws NumberFormatException{ // I don't think this needs to throw FileNotFoundException or IOException
 		// Use the data stored in the ArrayList to set the properties of the user object
-		System.out.println(array);
 		ArrayList<String> exerciseChoicesList = exerciseChoices.getExerciseList(); 
 		ArrayList<String[]> personalRecordsList = new ArrayList<String[]>();// do you need to set the size of the String array here?
 		try {
 			int recordsEndIndex = recordsStartIndex + exerciseChoicesList.size();
 			
-			for (int i = 0; i < array.size(); i++) {
-				String line = array.get(i);
+			for (int i = 0; i < userInfoList.size(); i++) {
+				String line = userInfoList.get(i);
 				// Sets the user parameters with the appropriate element in the list
 				if (i == nameIndex) {
 					user.setUserName(line);
@@ -145,7 +144,7 @@ public class UserFileIO {
 				} else if (i == userHeightIndex) {
 					user.setHeight(Double.parseDouble(line));
 					
-				} else if (i == userWeightsIndex) {
+				} else if (i == userWeightIndex) {
 					user.setBodyWeight(Double.parseDouble(line));
 					
 				} else if (i == dateIndex) {
@@ -153,7 +152,7 @@ public class UserFileIO {
 					
 				}else if (i >= recordsStartIndex && i <= recordsEndIndex) { 
 					// split line into two strings containing exercise name and pr weight and add to array
-					String[] pr = array.get(i).split(",");  
+					String[] pr = userInfoList.get(i).split(",");  
 					personalRecordsList.add(pr);
 				} 
 			}

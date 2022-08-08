@@ -19,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+
 /**
  * The javafx controller class for the workout application.
  * Manages the graphical user interface and some basic user funtionality 
@@ -28,8 +29,8 @@ import javafx.stage.Stage;
 public class WorkoutSelectionViewController {
 	private Stage applicationStage;
 	private Workout workout = new Workout();
-	private String userFileName = "src/James.txt"; // maybe have a way of selecting/entering a user file?
-	private UserFileIO userFile = new UserFileIO(userFileName); // pass in String fileName
+	private String userFileName = "src/James.txt"; 
+	private UserFileIO userFile = new UserFileIO(userFileName); 
 	private UserInfo user = userFile.getUser(); 
 	private ExerciseChoices exerciseChoices = new ExerciseChoices();
 
@@ -43,7 +44,7 @@ public class WorkoutSelectionViewController {
     * to get the types of exercises and number of sets the user wants to perform
     * @param event on action of "Select Exercises" button press in the workout selection scene
     */
-    void getExercises(ActionEvent event) {
+    private void getExercises(ActionEvent event) {
     	Scene workoutSelection = applicationStage.getScene();
     	
     	VBox allContents = new VBox();
@@ -154,7 +155,7 @@ public class WorkoutSelectionViewController {
      * @param exercise An ExerciseSet object that holds the values of the number of sets and the exercise name, passed 
      * as an argument to storeSets()
      */
-    void getRepsAndWeight(Scene exerciseSelectionScene, ExerciseSets exercise) {
+    private void getRepsAndWeight(Scene exerciseSelectionScene, ExerciseSets exercise) {
     	VBox allRows = new VBox();
     	allRows.setPadding(new Insets(20, 20, 20, 20));
     	
@@ -243,7 +244,7 @@ public class WorkoutSelectionViewController {
      * @param repsTextFields An ArrayList of TextFields that contains user input integers for the number of repetitions
      * @param weightTextFields An ArrayList of TextFields that contains user input integers for the weight lifted in lbs
      */
-    void storeSets(Scene exerciseSelectionScene, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields, Label errorLabel) {
+    private void storeSets(Scene exerciseSelectionScene, ExerciseSets exercise, ArrayList<TextField> repsTextFields, ArrayList<TextField> weightTextFields, Label errorLabel) {
     	// create StrengthExercise objects from ArrayLists of TextField inputs and add them to an ArrayList in the ExerciseSets object
     	
     	ArrayList<StrengthExercise> exercisesDone = new ArrayList<StrengthExercise>();
@@ -272,22 +273,42 @@ public class WorkoutSelectionViewController {
     }	
 
     
+   
     /**
-     * Creates and switch to a scene for the workout summary and displays important information about workout
-     * including the total weight lifted, the number of personal records beaten (if any) and 
-     * the bests sets done for each exercise
+     * Finishes the workout. This method calls other methods to calculate and display data from the workout
+     * to a summary scene and to write the user's workout information to their file  
      */
-
-    void finishWorkout() {
+    private void finishWorkout() {
     	// calculate values in workout object to be displayed
     	workout.setTotalWeightLifted(); 
     	workout.setBestSets();
     	ArrayList<String> newPRs = workout.checkPersonalBests(user.getPersonalRecords()); 
     	
+    	// call method to create and display the summary scene
+    	createSummaryScene(newPRs);
+    	
+    	//write user information to file
+    	try {
+			userFile.writeUser(userFileName);
+		} catch (IOException e) {
+			System.out.println("Error: Failed to write to file");
+			e.printStackTrace();
+		}
+    }
+    
+    /**
+     * Creates and switch to a scene for the workout summary and displays important information about workout
+     * including the total weight lifted, the number of personal records beaten (if any) and 
+     * the bests sets done for each exercise
+     */
+    private void createSummaryScene(ArrayList<String> newPRs) {
     	// create workout summary scene:
     	VBox allSummary = new VBox();
     	allSummary.setSpacing(10);
-    	allSummary.setAlignment(Pos.CENTER); 
+    	allSummary.setAlignment(Pos.CENTER);
+    	allSummary.setPrefWidth(300);
+    	
+    	// Add Title label
     	Label summaryTitleLabel = new Label("Workout Summary");
 		summaryTitleLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
 
@@ -305,32 +326,16 @@ public class WorkoutSelectionViewController {
     	// Switch to the workout summary scene
     	Scene workoutSummary = new Scene(allSummary);
     	applicationStage.setScene(workoutSummary);
-    	
-    	// Print Statements for testing, remove before submitting final version
-    	System.out.println("Name: " + user.getUserName());
-    	System.out.println("Num workouts Done: " + user.getNumWorkoutsDone());
-    	System.out.println("User height: " + user.getHeight());
-    	System.out.println("User BodyWeight: " + user.getBodyWeight());
-    	System.out.println("Personal Records: " + user.getPersonalRecords());
-
-    	
-    	//write user information to file
-    	try {
-			userFile.writeWorkout(userFileName);
-		} catch (IOException e) {
-			System.out.println("Error: Failed to write to file");
-			e.printStackTrace();
-		}
     }
     
     /**
-     * A helper method for finishWorkout(). This method populates a container with labels to display
-     * important information about the workout, including total weight lifted, the best sets performed,
+     * This method populates a container with labels to display important information about 
+     * the workout, including total weight lifted, the best sets performed,
      * and the personal records broken (if any).
      * @param summaryContent the container that is being populated by this method
      * @param newPRs a list containing the personal records broken during the workout
      */
-    void workoutSummaryContent(VBox summaryContent, ArrayList<String> newPRs) {
+    private void workoutSummaryContent(VBox summaryContent, ArrayList<String> newPRs) {
     	VBox.setMargin(summaryContent, new Insets(20, 20, 20, 20));
     	
     	// Create labels for the personal bests, if any have been broken
@@ -340,7 +345,7 @@ public class WorkoutSelectionViewController {
     		if (newPRs.size() == 1) {
     			prText += "!";
     		} else {
-    			// Handle grammar for plural case, append an "s"
+    			// Handle grammar for plural case: include an "s" 
     			prText += "s!";
     		}
     		personRecordsLabel.setText(prText);
@@ -381,7 +386,7 @@ public class WorkoutSelectionViewController {
      * @param num an integer to get the suffix for
      * @return a 2 character string, either "st", "nd", "rd", or "th"
      */
-    public String getOrdinalSuffix(int number) {
+    private String getOrdinalSuffix(int number) {
     	int lastDigit = number % 10;
     	int secondLastDigit = number % 100;
     	if (lastDigit == 1 && secondLastDigit != 11) {
