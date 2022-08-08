@@ -1,9 +1,19 @@
 package application;
 
+/**
+ * Thrown to indicate that the application has attempted to enter an invalid value for the properties of a StrengthExercise object
+ * @author JC
+ *
+ */
 public class InvalidStrengthExerciseException extends Exception {
-
+	
 	public InvalidStrengthExerciseException() {
 		// TODO Auto-generated constructor stub
+		try {
+			
+		} catch (NumberFormatException nfe) {
+			
+		}
 	}
 
 	public InvalidStrengthExerciseException(String message) {

@@ -86,7 +86,7 @@ public class ExerciseSets {
 	 * Get the list of all sets in the exercise
 	 * @return the list containing StrengthExerices objects for each set
 	 */
-	ArrayList<StrengthExercise> getAllSets() {
+	public ArrayList<StrengthExercise> getAllSets() {
 		return new ArrayList<StrengthExercise>(allSets); 
 	}
 	
@@ -94,7 +94,7 @@ public class ExerciseSets {
 	 * Sets the list of all exercise sets
 	 * @param allSets the list of StrengthExercise objects to set allSets to
 	 */
-	void setAllSets(ArrayList<StrengthExercise> allSets) {
+	public void setAllSets(ArrayList<StrengthExercise> allSets) {
 		this.allSets = new ArrayList<StrengthExercise>(allSets); 
 	}
 }

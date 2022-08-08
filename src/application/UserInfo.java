@@ -20,54 +20,109 @@ public class UserInfo {
 	private Date date;
 	private HashMap<String, Integer> personalRecords;
 
+	/**
+	 * Creates a new user information object and sets the date to the current date 
+	 */
 	public UserInfo() {
-		// sets the date to the current date
 		date = new Date(); 
 	}
 	
-	String getUserName() {
-		return userName;
+	/**
+	 * Gets the name of the user
+	 * @return a String containing the user name
+	 */
+	public String getUserName() {
+		return new String(userName);
 	}
 
-	void setUserName(String userName) {
-		this.userName = userName;
+	/**
+	 * Sets the user name 
+	 * @param userName the name which is used to set the userName property
+	 */
+	public void setUserName(String userName) {
+		this.userName = new String(userName);
 	}
 
-	Double getBodyWeight() {
+	/**
+	 * Gets the body weight of the user
+	 * @return the value of the user's bodyweight
+	 */
+	public Double getBodyWeight() {
 		return bodyWeight;
 	}
 
-	void setBodyWeight(Double bodyWeight) {
+	/**
+	 * Set the bodyweight of the user
+	 * @param bodyWeight the weight value used to set the weight property
+	 */
+	public void setBodyWeight(Double bodyWeight) {
 		this.bodyWeight = bodyWeight;
 	}
 
-	Double getHeight() {
+	/**
+	 * Gets the height of the user
+	 * @return the value of the user's height
+	 */
+	public Double getHeight() {
 		return height;
 	}
 
-	void setHeight(Double height) {
+	/**
+	 * Sets the height of the user
+	 * @param height the value used to set the height property
+	 */
+	public void setHeight(Double height) {
 		this.height = height;
 	}
 	
-	int getNumWorkoutsDone() {
+	/**
+	 * Gets the number of workouts done by the user
+	 * @return the value of the number of workouts
+	 */
+	public int getNumWorkoutsDone() {
 		return numWorkoutsDone;
 	}
 
-	void setNumWorkoutsDone(int numWorkoutsDone) {
+	/**
+	 * Sets the number of workouts done by the user
+	 * @param numWorkoutsDone the value used to set the number of workouts done property
+	 */
+	public void setNumWorkoutsDone(int numWorkoutsDone) {
 		this.numWorkoutsDone = numWorkoutsDone;
 	}
 
-	Date getDate() {
-		return date;
+	/**
+	 * Gets the date
+	 * @return
+	 */
+	public Date getDate() {
+		return new Date(date.getTime());
 	}
 	
-	void setDate(Date date) {
-		this.date = date;
+	/**
+	 * Set the date 
+	 * @param date
+	 */
+	public void setDate(Date date) {
+		this.date = new Date(date.getTime());
 	}
-	HashMap<String, Integer> getPersonalRecords() {
+	
+	/** 
+	 * Gets all of the user's personal records. Personal records consist of the name of the exercise
+	 * and the heaviest weight they have ever performed with that exercise  
+	 * @return A map of the exercise name and the value of the weight associated with that exercise
+	 */
+	public HashMap<String, Integer> getPersonalRecords() {
+		// pass a reference
 		return personalRecords;
 	}
-	void setPersonalRecords(HashMap<String, Integer> personalRecords) {
-		this.personalRecords = personalRecords;
+	
+	/**
+	 * Sets the user's personal records. Personal records consist of the name of the exercise
+	 * and the heaviest weight they have ever performed with that exercise    
+	 * @param personalRecords A map of the exercise name and the value of the weight associated with that exercise
+	 */
+	public void setPersonalRecords(HashMap<String, Integer> personalRecords) {
+		this.personalRecords = new HashMap<String, Integer>(personalRecords);
 	}
 }

@@ -27,9 +27,9 @@ public class StrengthExercise {
 	 * @param exerciseName the name of the exercise
 	 * @param reps the number of repetitions
 	 * @param weight the weight moved in the exercise
-	 * @throws NumberFormatException the String parameters for repetions and weight are parsed to integers and can throw this exception
-	 * @throws InvalidRepetitionsException
-	 * @throws InvalidWeightException
+	 * @throws InvalidStrengthExerciseException the String parameters for repetitions and weight 
+	 * are parsed to integers and can throw this exception if an non numerical value is entered 
+	 * or if the value entered is outside of the allowable range
 	 */
 	public StrengthExercise(String exerciseName, String reps, String weight) throws InvalidStrengthExerciseException{
 		this.exerciseName = new String(exerciseName);
@@ -85,17 +85,37 @@ public class StrengthExercise {
 		}
 	}
 	
+	/**
+	 * Gets the name of the strength exercise
+	 * @return a string containing the name of the name of the exercise
+	 */
 	public String getName() {
 		return new String(this.exerciseName);
 	}
 	
+	/**
+	 * Gets the number of repetitions of the strength exercise
+	 * @return the number of repetitions
+	 */
 	public int getReps() {
 		return this.repetitions;
 	}
 	
+	/**
+	 * Gets the weight value of the strength exercise
+	 * @return the weight value
+	 */
 	public int getWeight() {
 		return this.weight;
 	}
+	
+	/**
+	 *Returns a string representation of the strength exercise object in the form
+	 *of the exercise name, the number of repetitions, and the weight value separated with 
+	 *labels and all in parenthesis. Eg. For a object whose parameters are exerciseName = "Bench Press",
+	 *repetitions = 10, weight = 200,  this method will return 
+	 *(Bench Press: reps: 10, weight: 200)
+	 */
 	public String toString() {
 		return "(" + this.exerciseName + ": reps: " + this.repetitions + ", weight: " + this.weight + ")";
 	}
