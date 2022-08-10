@@ -35,7 +35,7 @@ public class Workout {
 	 * Bench Press, then the ExerciseSets object containing those 4 sets of Bench Press is the value that will be 
 	 * associated with key "2". This mapping is used to ensure only 1 ExerciseSets object is stored for each position
 	 * in the workout. 
-	 * @param exerciseSets
+	 * @param exerciseSets the exercise sets to be added to the allExercises HashMap
 	 */
 	public void setAllExercises(ExerciseSets exerciseSets) {
 		// add ArrayList of StrengthExercises (represents sets) to the allExercises HashMap
@@ -157,24 +157,6 @@ public class Workout {
 		return bestSet;
 	}
 	
-	/**
-	 * The toString method returns a string representation of all of the exercises performed in the workout
-	 * @return 
-	 */
-	public String toString() {
-		String output = "";
-		if (!this.allExercises.isEmpty()) {
-			for (int i = 0; i < this.allExercises.size(); i++) {
-				String str = "";
-				for (int j = 0; j < this.allExercises.get(i).getAllSets().size(); j++) {
-					str += "Exercise number: " + i + ", " + this.allExercises.get(i).getAllSets().get(j).toString() + "\n";
-				}
-				output += str;
-			}
-		} 
-		return output;
-	}
-
 	
 	/**
 	 * Compares the HashMaps of personal bests with the workout's best sets and 
@@ -194,7 +176,7 @@ public class Workout {
 					// if the user's best set weight is greater than current PR, then add it to PR list to be returned and update pr HashMap
 					if (heaviestSet.getWeight() > personalRecordsMap.get(exerciseName)) {
 						prList.add(exerciseName);
-						personalRecordsMap.replace(exerciseName, heaviestSet.getWeight()); // should work because we passed in a reference to the map
+						personalRecordsMap.replace(exerciseName, heaviestSet.getWeight()); // works correctly because we passed in a reference to the map
 					}
 				} else {
 					// personal record hasn't been recorded yet, counts as a pr

@@ -9,11 +9,6 @@ public class InvalidStrengthExerciseException extends Exception {
 	
 	public InvalidStrengthExerciseException() {
 		// TODO Auto-generated constructor stub
-		try {
-			
-		} catch (NumberFormatException nfe) {
-			
-		}
 	}
 
 	public InvalidStrengthExerciseException(String message) {

@@ -115,6 +115,7 @@ public class StrengthExercise {
 	 *labels and all in parenthesis. Eg. For a object whose parameters are exerciseName = "Bench Press",
 	 *repetitions = 10, weight = 200,  this method will return 
 	 *(Bench Press: reps: 10, weight: 200)
+	 *@return the string representation of the StrengthExerice
 	 */
 	public String toString() {
 		return "(" + this.exerciseName + ": reps: " + this.repetitions + ", weight: " + this.weight + ")";

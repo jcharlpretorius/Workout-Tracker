@@ -93,7 +93,7 @@ public class UserInfo {
 
 	/**
 	 * Gets the date
-	 * @return
+	 * @return the Date object currently associated with the user
 	 */
 	public Date getDate() {
 		return new Date(date.getTime());
@@ -101,7 +101,7 @@ public class UserInfo {
 	
 	/**
 	 * Set the date 
-	 * @param date
+	 * @param date the date to set the UserInfo object's date property
 	 */
 	public void setDate(Date date) {
 		this.date = new Date(date.getTime());
@@ -113,7 +113,7 @@ public class UserInfo {
 	 * @return A map of the exercise name and the value of the weight associated with that exercise
 	 */
 	public HashMap<String, Integer> getPersonalRecords() {
-		// pass a reference
+		// pass a reference, HashMap is modified by Workout class checkPersonalBests()
 		return personalRecords;
 	}
 	
