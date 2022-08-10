@@ -402,6 +402,10 @@ public class WorkoutSelectionViewController {
     	return "th";
 	}
     
+    /**
+     * Set the controller's application Stage. 
+     * @param stage the Stage to set the controller's applicationStage to
+     */
     public void setApplicationStage(Stage stage) {
     	this.applicationStage = stage;
     }

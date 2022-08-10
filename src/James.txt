@@ -1,21 +1,22 @@
 James
-164
+130
 170.0
 64.0
 05-02-2022
 Seated Row,95
+Chin ups,10
 Overhead Press,123
 Lateral Raises,1
-Tricep Push-downs,222
-Barbell Row,222
-Bicep Curl,90
-Dead Lift,345
-Squat,205
+Barbell Row,84
+Calf Raise,20
+Dead Lift,120
+Squat,220
 Hammer Curl,35
+Bulgarian Split Squat,55
 Triceps Dips,50
-Lat Pulldown,120
-pullups,0
-Bench Press,230
-Pull ups,25
+Lat Pulldown,90
+Bench Press,100
 Chest Fly,22
-Romanian Deadlift,130
+Back Extension,30
+Romanian Deadlift,100
+Skullcrusher,0

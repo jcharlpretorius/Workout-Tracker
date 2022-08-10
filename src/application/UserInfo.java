@@ -93,7 +93,7 @@ public class UserInfo {
 
 	/**
 	 * Gets the date
-	 * @return
+	 * @return the Date object currently associated with the user
 	 */
 	public Date getDate() {
 		return new Date(date.getTime());
@@ -101,7 +101,7 @@ public class UserInfo {
 	
 	/**
 	 * Set the date 
-	 * @param date
+	 * @param date the date to set the UserInfo object's date property
 	 */
 	public void setDate(Date date) {
 		this.date = new Date(date.getTime());

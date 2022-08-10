@@ -29,8 +29,8 @@ public class UserFileIO {
 	private int nameIndex = 0;
 	private int numWorkoutsIndex = 1; 
 	private int userHeightIndex = 2; 
-	private int userWeightIndex = 3; // Later: CSV bodyweights, should be a method somewhere that adds / updates this
-	private int dateIndex = 4; // Later: CSV dates, corresponding to bodyweight for BMI calculation
+	private int userWeightIndex = 3; 
+	private int dateIndex = 4; 
 	private int recordsStartIndex = 5;	
 	
 	/**

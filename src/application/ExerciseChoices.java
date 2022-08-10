@@ -31,7 +31,7 @@ public class ExerciseChoices {
     	exerciseList.add("Lateral Raise");
     	exerciseList.add("Front Raise");
     	exerciseList.add("Face Pull");
-    	exerciseList.add("Bicep Curl");
+    	exerciseList.add("Biceps Curl");
     	exerciseList.add("Hammer Curl");
     	exerciseList.add("Triceps Extension");
     	exerciseList.add("Triceps Dips");
