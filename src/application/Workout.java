@@ -176,7 +176,7 @@ public class Workout {
 					// if the user's best set weight is greater than current PR, then add it to PR list to be returned and update pr HashMap
 					if (heaviestSet.getWeight() > personalRecordsMap.get(exerciseName)) {
 						prList.add(exerciseName);
-						personalRecordsMap.replace(exerciseName, heaviestSet.getWeight()); // should work because we passed in a reference to the map
+						personalRecordsMap.replace(exerciseName, heaviestSet.getWeight()); // works correctly because we passed in a reference to the map
 					}
 				} else {
 					// personal record hasn't been recorded yet, counts as a pr

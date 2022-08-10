@@ -113,7 +113,7 @@ public class UserInfo {
 	 * @return A map of the exercise name and the value of the weight associated with that exercise
 	 */
 	public HashMap<String, Integer> getPersonalRecords() {
-		// pass a reference
+		// pass a reference, HashMap is modified by Workout class checkPersonalBests()
 		return personalRecords;
 	}
 	
